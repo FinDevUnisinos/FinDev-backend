@@ -1,7 +1,7 @@
 import "reflect-metadata"
 import express from "express"
 import {asyncConnection} from "./connection"
-import { UserController } from "./controller/UserController";\
+import { UserController } from "./controller/UserController"
 
 const app = express();
 const port = 3000;

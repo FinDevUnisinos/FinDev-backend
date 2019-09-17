@@ -1,7 +1,6 @@
 import "reflect-metadata"
 import { config } from './config'
 import { createConnection } from "typeorm";
-import { UserController } from "./controller/UserController";
 
 export async function asyncConnection() { 
     let connection = await createConnection({
