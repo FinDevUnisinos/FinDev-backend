@@ -26,8 +26,8 @@ export class User extends BaseEntity {
     @Column({ type: "bigint", nullable: true} )
     active: number;
 
-    @Column({ type: "bigint", nullable: true})
-    firstLogin: number;
+    @Column({ type: "bool", nullable: true})
+    firstLogin: boolean;
 
     @ManyToOne(() => UserType, ut => ut.id)
     @JoinColumn({ name: "idUserType"})
