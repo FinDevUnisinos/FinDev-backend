@@ -2,11 +2,8 @@ import {
     Entity, 
     Column,
     PrimaryGeneratedColumn, 
-    ManyToOne,
     BaseEntity,
-    JoinColumn
 } from "typeorm";
-import { UserType } from './UserType'
 
 @Entity("User")
 export class User extends BaseEntity {
@@ -14,7 +11,7 @@ export class User extends BaseEntity {
     @PrimaryGeneratedColumn({ type: "bigint"})
     id: number;
 
-    @Column({ type: "character varying" , length: 256, nullable: true})
+    @Column({ type: "character varying" , length: 256, nullable: false})
     name: string;
 
     @Column({ type: "character varying" , length: 256, nullable: false, unique: true})
@@ -23,13 +20,12 @@ export class User extends BaseEntity {
     @Column({ type: "character varying" , length: 256 , nullable: true})
     password: string;
 
-    @Column({ type: "bigint", nullable: true} )
-    active: number;
+    @Column({ type: "bool", nullable: false} )
+    active: boolean;
 
-    @Column({ type: "bool", nullable: true})
+    @Column({ type: "bool", nullable: false})
     firstLogin: boolean;
 
-    @ManyToOne(() => UserType, ut => ut.id)
-    @JoinColumn({ name: "idUserType"})
-    idUserType: UserType;
+    @Column({  type: "character varying" , length: 40 , nullable: false} )
+    userType: string;
 }

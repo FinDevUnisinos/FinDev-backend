@@ -1,9 +1,8 @@
 import "reflect-metadata"
 import express from "express"
 import { config } from './config'
-import {createConnection,getRepository,getConnection} from "typeorm";
+import {createConnection} from "typeorm";
 import { UserController } from "./controller/UserController";
-import { UserTypeController } from "./controller/UserTypeController";
 
 const app = express();
 const port = 3000;
@@ -27,9 +26,6 @@ createConnection({
   let allUsers= new UserController
   console.log(await allUsers.getUserById(1))
   console.log(await allUsers.getUsers())
-
-  let allTypesUser= new UserTypeController
-  console.log(await allTypesUser.getUserTypes())
 
 }).catch(error => console.log(error));
 
