@@ -5,8 +5,8 @@ import {createConnection,getRepository,getConnection} from "typeorm";
 import { User } from "./entity/User";
 import { UserType } from "./entity/UserType";
 import {PoolConfig, Pool} from "pg";
-import { UserController } from "./controler/UserController";
-import { UserTypeController } from "./controler/UserTypeController";
+import { UserController } from "./controller/UserController";
+import { UserTypeController } from "./controller/UserTypeController";
 
 const app = express();
 const port = 3000;
