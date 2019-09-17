@@ -6,7 +6,7 @@ import { User } from "./entity/User";
 import { UserType } from "./entity/UserType";
 import {PoolConfig, Pool} from "pg";
 import { UserController } from "./controler/UserController";
-
+import { UserTypeController } from "./controler/UserTypeController";
 
 const app = express();
 const port = 3000;
@@ -27,28 +27,14 @@ createConnection({
   dropSchema: false
 }).then(async connection => {
   // here you can start to work with your entities
-  const firstUser = await connection
-    .getRepository(User)
-    .createQueryBuilder("u")
-    .where("u.id = :id", { id: 1 })
-    .getOne();
-  console.log(firstUser)
+  let allUsers= new UserController
+  console.log(await allUsers.getOne(1))
+  console.log(await allUsers.getAll())
 
-  let s= new UserController
-  console.log(await s.getAll())
+  let allTypesUser= new UserTypeController
+  console.log(await allTypesUser.getAll())
 
 }).catch(error => console.log(error));
-
-// let s= new UserController
-// s.getAll()
-
-
-
-// const pool = new Pool(config);
-// pool.query(`SELECT * FROM findev.\"User\"`, (err, res) => {
-//   console.log(err, res);
-//   pool.end();
-// });
 
 app.get('/', (req, res) => {
   res.send('Running');
