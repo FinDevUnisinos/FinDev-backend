@@ -2,9 +2,6 @@ import "reflect-metadata"
 import express from "express"
 import { config } from './config'
 import {createConnection,getRepository,getConnection} from "typeorm";
-import { User } from "./entity/User";
-import { UserType } from "./entity/UserType";
-import {PoolConfig, Pool} from "pg";
 import { UserController } from "./controller/UserController";
 import { UserTypeController } from "./controller/UserTypeController";
 
@@ -28,11 +25,11 @@ createConnection({
 }).then(async connection => {
   // here you can start to work with your entities
   let allUsers= new UserController
-  console.log(await allUsers.getOne(1))
-  console.log(await allUsers.getAll())
+  console.log(await allUsers.getUserById(1))
+  console.log(await allUsers.getUsers())
 
   let allTypesUser= new UserTypeController
-  console.log(await allTypesUser.getAll())
+  console.log(await allTypesUser.getUserTypes())
 
 }).catch(error => console.log(error));
 

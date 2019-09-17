@@ -17,7 +17,7 @@ export class User extends BaseEntity {
     @Column({ type: "character varying" , length: 256, nullable: true})
     name: string;
 
-    @Column({ type: "character varying" , length: 256, nullable: true})
+    @Column({ type: "character varying" , length: 256, nullable: false, unique: true})
     email: string;
 
     @Column({ type: "character varying" , length: 256 , nullable: true})

@@ -2,10 +2,10 @@ import {getConnection} from "typeorm";
 import {User} from "../entity/User";
 
 export class UserController {
-    getAll() {
+    getUsers() {
         return getConnection().manager.find(User);
     }
-    getOne(idExt:number){
+    getUserById(idExt:number){
         const one =  getConnection()
             .getRepository(User)
             .createQueryBuilder("u")

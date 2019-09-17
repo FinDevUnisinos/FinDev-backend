@@ -2,7 +2,7 @@ import {getConnection} from "typeorm";
 import { UserType } from "../entity/UserType";
 
 export class UserTypeController {
-    getAll() {
+    getUserTypes() {
         return getConnection().manager.find(UserType);
     }
 }
