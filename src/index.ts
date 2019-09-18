@@ -20,6 +20,17 @@ app.get('/api/user/all', async (req, res) => {
   })
 });
 
+/* ONLY FOR TESTS of convert passwd
+{
+	"password":"teste"
+}
+*/
+app.post('/api/user/hassPass',jsonParser, (req,res) =>{
+  let ucGlobal= new UserController
+  let converted =ucGlobal.hashPassword(req.body.password)
+  res.send(converted)
+});
+
 /*
 JSON Default for find email and passwd
   {
@@ -31,7 +42,7 @@ app.post('/api/user/verifyPasswd', jsonParser, async (req, res) => {
   asyncConnection().then(async connection => {
     let uc= new UserController
     let email = req.body.email
-    let password = req.body.password
+    let password = uc.hashPassword(req.body.password)
     if ((await uc.veryfyPassword(email,password))!==undefined) {
       let user = await uc.getUserByEmail(email)
       let name = user.name
@@ -69,14 +80,15 @@ JSON Default for Insert
 app.post('/api/user/insert', jsonParser, async (req, res) => {
   try {
       let createdUser = new User()
+      let uc= new UserController
+ 
       createdUser.NewUser(
         req.body.name,
         req.body.email,
-        req.body.password,
+        uc.hashPassword(req.body.password),
         req.body.usertype
       )
       asyncConnection().then(async () => {
-          let uc= new UserController
           uc.addUser(createdUser)
           res.send("User Inserted on Database")
     })

@@ -1,5 +1,6 @@
 import {getConnection} from "typeorm";
 import {User} from "../entity/User";
+import { njwtSecret } from "../config";
 
 var nJwt = require('njwt');
 
@@ -54,10 +55,15 @@ export class UserController {
         "exp": 1568781037
         }
         
-        var jwt = nJwt.create(claims,"secret","HS256");
+        var jwt = nJwt.create(claims,njwtSecret,"HS256");
         var token = jwt.compact();
 
         return token
+    }
+
+    hashPassword(password:string){
+        var hash = require('hash.js')
+        return hash.sha256().update(password).digest('hex')
     }
 
 }
