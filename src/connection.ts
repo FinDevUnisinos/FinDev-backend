@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import { config } from './config'
+import { config } from './config/db'
 import { createConnection, getConnectionManager } from "typeorm";
 
 export async function asyncConnection() { 

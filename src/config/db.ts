@@ -18,5 +18,3 @@ export const config: IConfigType = {
     port: process.env.port,
     scheme: process.env.scheme
 }
-
-export const njwtSecret: string = "hKGA9LPJkF4zYhFdX9Ju1vfBAy6P5Kkh"

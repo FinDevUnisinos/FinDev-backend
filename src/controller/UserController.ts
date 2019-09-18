@@ -1,6 +1,6 @@
 import {getConnection} from "typeorm";
 import {User} from "../entity/User";
-import { njwtSecret } from "../config";
+import { njwtSecret } from "../config/jwt";
 
 let nJwt = require('njwt');
 
