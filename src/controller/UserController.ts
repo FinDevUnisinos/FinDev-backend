@@ -1,6 +1,9 @@
 import {getConnection} from "typeorm";
 import {User} from "../entity/User";
 
+var uuid = require('uuid');
+var nJwt = require('njwt');
+
 export class UserController {
     addUser(usr:User){
         getConnection()
@@ -31,6 +34,31 @@ export class UserController {
             .where("u.email = :email", { email: emailExt })
             .getOne();
         return one
+    }
+
+    veryfyPassword(emailExt:string, passwordExt:string){
+        const one =  getConnection()
+            .getRepository(User)
+            .createQueryBuilder("u")
+            .where("u.email = :email", { email: emailExt })
+            .andWhere("u.password = :password", { password: passwordExt })
+            .getOne();
+        return one
+    }
+
+    generateToken(name:string, email:string){
+        var claims = {
+        "name": name,
+        "email": email,
+        "jti": "48c1dd1c-d526-4f06-a3af-6223695e2f89",
+        "iat": 1568777437,
+        "exp": 1568781037
+        }
+        
+        var jwt = nJwt.create(claims,"secret","HS256");
+        var token = jwt.compact();
+
+        return token
     }
 
 }

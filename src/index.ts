@@ -20,6 +20,35 @@ app.get('/api/user/all', async (req, res) => {
   })
 });
 
+/*
+JSON Default for find email and passwd
+  {
+  "email":"gianboschetti@icloud.com",
+  "password":"teste"
+  }
+*/
+app.post('/api/user/verifyPasswd', jsonParser, async (req, res) => {
+  asyncConnection().then(async connection => {
+    let uc= new UserController
+    let email = req.body.email
+    let password = req.body.password
+    if ((await uc.veryfyPassword(email,password))!==undefined) {
+      let user = await uc.getUserByEmail(email)
+      let name = user.name
+      res.send(uc.generateToken(name, email))
+    }
+    else{
+      res.send(false)
+    }
+  })  
+})
+
+/*
+JSON Default for find by email
+  {
+  "email":"g.b@mail.com"
+  }
+*/
 app.post('/api/user/oneByEmail', jsonParser, async (req, res) => {
   asyncConnection().then(async () => {
     let uc= new UserController
@@ -28,6 +57,15 @@ app.post('/api/user/oneByEmail', jsonParser, async (req, res) => {
   })  
 })
 
+/*
+JSON Default for Insert
+  {
+  "name":"Teste",
+  "password":"Gian",
+  "email":"gb@icloud.com",
+  "usertype":"EMPLOYEE"
+  }
+*/
 app.post('/api/user/insert', jsonParser, async (req, res) => {
   try {
       let createdUser = new User()
