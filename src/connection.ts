@@ -1,11 +1,10 @@
 import "reflect-metadata"
 import { config } from './config'
-import { createConnection } from "typeorm";
-import { UserController } from "./controller/UserController";
+import { createConnection, getConnectionManager } from "typeorm";
 
 export async function asyncConnection() { 
     try {
-        let connection = await createConnection({
+        return await createConnection({
             type: "postgres",
             host: config.host,
             port: 5432,
@@ -19,15 +18,13 @@ export async function asyncConnection() {
             synchronize: true,
             logging: false,
             dropSchema: false
-        }).then(async connection => {
-            // here you can start to work with your entities
-            let allUsers= new UserController
-            console.log(await allUsers.getUserById(1))
-            console.log(await allUsers.getUsers())
-          
-          }).catch(error => console.log(error));
-          
-    }catch (err) {
-        console.log(err)
+        })
+    } catch (error) {
+        // If AlreadyHasActiveConnectionError occurs, return already existent connection
+        if (error.name === "AlreadyHasActiveConnectionError") {
+            const existentConn = getConnectionManager().get("default");
+            return existentConn;
+        }
     }
+    
 }
