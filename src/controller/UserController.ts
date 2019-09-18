@@ -33,4 +33,14 @@ export class UserController {
         return one
     }
 
+    veryfyPassword(emailExt:string, passwordExt:string){
+        const one =  getConnection()
+            .getRepository(User)
+            .createQueryBuilder("u")
+            .where("u.email = :email", { email: emailExt })
+            .andWhere("u.password = :password", { password: passwordExt })
+            .getOne();
+        return one
+    }
+
 }
