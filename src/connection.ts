@@ -13,7 +13,7 @@ export async function asyncConnection() {
             database: config.database,
             schema:   config.scheme,
             entities: [
-            __dirname + "/entity/*.ts"
+                __dirname + "/entity/*.ts"
             ],
             synchronize: true,
             logging: false,
