@@ -2,6 +2,8 @@ import {getConnection} from "typeorm";
 import {User} from "../entity/User";
 import { njwtSecret } from "../config";
 
+let nJwt = require('njwt');
+
 export class UserController {
     addUser(usr:User){
         getConnection()
@@ -44,8 +46,7 @@ export class UserController {
         return one
     }
 
-    generateToken(name:string, email:string){
-        var nJwt = require('njwt');
+    generateToken(name: string, email: string){
         var claims = {
         "name": name,
         "email": email,
@@ -53,11 +54,19 @@ export class UserController {
         "iat": 1568777437,
         "exp": 1568781037
         }
-        
         var jwt = nJwt.create(claims,njwtSecret,"HS256");
         var token = jwt.compact();
 
         return token
+    }
+
+    validToken(token:string){
+        try{
+            let verifiedJwt = nJwt.verify(token,njwtSecret);
+            return verifiedJwt
+          }catch(e){
+            console.log(e);
+          }
     }
 
     hashPassword(password:string){

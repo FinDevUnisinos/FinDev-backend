@@ -20,6 +20,16 @@ app.get('/api/user/all', async (req, res) => {
   })
 });
 
+/* ONLY FOR TESTS of token verify
+{
+	"token":"blablabalbalba"
+}
+*/
+app.post('/api/user/validToken',jsonParser, (req,res) =>{
+  let uc= new UserController
+  res.send(uc.validToken(req.body.token))
+})
+
 /* ONLY FOR TESTS of convert passwd
 {
 	"password":"teste"
