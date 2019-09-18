@@ -28,4 +28,18 @@ export class User extends BaseEntity {
 
     @Column({  type: "character varying" , length: 40 , nullable: false} )
     userType: string;
+
+    NewUser(
+        name:string, 
+        email:string, 
+        password:string,
+        userType:string,
+        ) {
+        this.name = name
+        this.email = email
+        this.password = password
+        this.userType = userType
+        this.active = true
+        this.firstLogin = true
+    }
 }
