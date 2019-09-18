@@ -38,7 +38,7 @@ JSON Default for find email and passwd
   "password":"teste"
   }
 */
-app.post('api/user/login', jsonParser, async (req, res) => {
+app.post('/api/user/login', jsonParser, async (req, res) => {
   asyncConnection().then(async connection => {
     let uc= new UserController
     let email = req.body.email
