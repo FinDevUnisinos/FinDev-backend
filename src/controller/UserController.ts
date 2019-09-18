@@ -2,8 +2,6 @@ import {getConnection} from "typeorm";
 import {User} from "../entity/User";
 import { njwtSecret } from "../config";
 
-var nJwt = require('njwt');
-
 export class UserController {
     addUser(usr:User){
         getConnection()
@@ -47,6 +45,7 @@ export class UserController {
     }
 
     generateToken(name:string, email:string){
+        var nJwt = require('njwt');
         var claims = {
         "name": name,
         "email": email,
