@@ -1,7 +1,6 @@
 import {getConnection} from "typeorm";
 import {User} from "../entity/User";
 
-var uuid = require('uuid');
 var nJwt = require('njwt');
 
 export class UserController {
