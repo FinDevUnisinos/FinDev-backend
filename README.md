@@ -8,6 +8,8 @@ Desenvolvimento de Software III
 * [@types/node 12.7.5](https://www.npmjs.com/package/@types/node)
 * [pg](https://www.npmjs.com/package/pg)
 * [njwt 1.0.0](https://www.npmjs.com/package/njwt/v/1.0.0)
+* [reflect-metadata 0.1.13](https://www.npmjs.com/package/reflect-metadata)
+* [ts-node 8.4.1](https://www.npmjs.com/package/ts-node)
 
 To run the project you have to install it's dependencies:
 ```
