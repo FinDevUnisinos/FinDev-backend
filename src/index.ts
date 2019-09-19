@@ -4,8 +4,10 @@ import { asyncConnection } from "./connection";
 import { UserController } from "./controller/UserController";
 import { User } from "./entity/User";
 import bodyParser from "body-parser";
+import cors from 'cors'
 
 const app = express();
+app.use(cors())
 const port = 3000;
 var jsonParser = bodyParser.json()
 
