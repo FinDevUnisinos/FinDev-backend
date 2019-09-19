@@ -61,7 +61,7 @@ app.post('/api/user/login', jsonParser, async (req, res) => {
       res.send(uc.generateToken(name, email))
     }
     else{
-      res.send(false)
+      res.status(401).send(false)
     }
   })  
 })
