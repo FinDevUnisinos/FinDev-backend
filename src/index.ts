@@ -2,65 +2,68 @@ import "reflect-metadata"
 import express from "express"
 import { asyncConnection } from "./connection";
 import { UserController } from "./controller/UserController";
+import { SessionController } from "./controller/SessionController";
+import { ProjectController } from "./controller/ProjectController";
 import { User } from "./entity/User";
 import bodyParser from "body-parser";
 import cors from 'cors'
-import { SessionController } from "./controller/SessionController";
 
 const app = express();
 app.use(cors())
 const port = 3000;
+
 var jsonParser = bodyParser.json()
+let sessionController = new SessionController
+let projectController= new ProjectController
+let userController= new UserController
 
 app.get('/', (req, res) => {
   res.send('Running');
 });
 
+app.post('/api/project/allByOwner', jsonParser, async (req, res, next) => {
+  var token = req.headers['x-access-token']
+  if (token) {
+    let validToken = sessionController.validateToken(token.toString())
+    if(validToken!=undefined){
+      asyncConnection().then(async () => {
+        let user = await userController.getUserByEmail(validToken.body.email)
+        res.send(await projectController.getProjectsByOwner(user.id))
+      })
+    } else {
+      res.send("Invalid Token")
+    }
+  } else{
+    res.send("Pass some Token in header")
+  }
+})
+
 app.get('/api/user/all', async (req, res) => {
   asyncConnection().then(async () => {
-      let uc= new UserController
-      res.send(await uc.getUsers())
+      let userController= new UserController
+      res.send(await userController.getUsers())
   })
 });
 
-/* ONLY FOR TESTS of token verify
-{
-	"token":"blablabalbalba"
-}
-*/
 app.post('/api/user/validToken',jsonParser, (req,res) =>{
   let session = new SessionController
-  res.send(session.validToken(req.body.token))
+  res.send(session.validateToken(req.body.token))
 })
 
-/* ONLY FOR TESTS of convert passwd
-{
-	"password":"teste"
-}
-*/
 app.post('/api/user/hassPass',jsonParser, (req,res) =>{
   let session = new SessionController
   let converted =session.hashPassword(req.body.password)
   res.send(converted)
 });
 
-/*
-JSON Default for find email and passwd
-  {
-  "email":"gianboschetti@icloud.com",
-  "password":"teste"
-  }
-*/
 app.post('/api/user/login', jsonParser, async (req, res) => {
   asyncConnection().then(async connection => {
-    let uc= new UserController
-    let session = new SessionController
     let email = req.body.email
-    let password = session.hashPassword(req.body.password)
-    if ((await uc.veryfyPassword(email,password))!==undefined) {
-      let user = await uc.getUserByEmail(email)
+    let password = sessionController.hashPassword(req.body.password)
+    if ((await userController.veryfyPassword(email,password))!==undefined) {
+      let user = await userController.getUserByEmail(email)
       let name = user.name
-      res.send(session.generateToken(name, email))
+      res.send(sessionController.generateToken(name, email))
     }
     else{
       res.status(401).send(false)
@@ -68,46 +71,32 @@ app.post('/api/user/login', jsonParser, async (req, res) => {
   })  
 })
 
-/*
-JSON Default for find by email
-  {
-  "email":"g.b@mail.com"
-  }
-*/
 app.post('/api/user/oneByEmail', jsonParser, async (req, res) => {
   asyncConnection().then(async () => {
-    let uc= new UserController
     let email = req.body.email
-    res.send(await uc.getUserByEmail(email))
+    res.send(await userController.getUserByEmail(email))
   })  
 })
 
-/*
-JSON Default for Insert
-  {
-  "name":"Teste",
-  "password":"Gian",
-  "email":"gb@icloud.com",
-  "usertype":"EMPLOYEE"
-  }
-*/
 app.post('/api/user/insert', jsonParser, async (req, res) => {
   try {
-      let session = new SessionController
-      let uc= new UserController
-      let createdUser = new User() 
-      createdUser.NewUser(
-        req.body.name,
-        req.body.email,
-        session.hashPassword(req.body.password),
-        req.body.usertype
-      )
-      asyncConnection().then(async () => {
-          uc.addUser(createdUser)
-          res.send("User Inserted on Database")
+    //find an existing user
+    let user = await userController.getUserByEmail(req.body.email);
+    if (user) return res.status(400).send("User already registered.");
+
+    let createdUser = new User() 
+    createdUser.NewUser(
+      req.body.name,
+      req.body.email,
+      sessionController.hashPassword(req.body.password),
+      req.body.usertype
+    )
+    asyncConnection().then(async () => {
+        userController.addUser(createdUser)
+        res.send("User successfully created")
     })
   } catch (error) {
-    res.send("User Doesn't Inserted on Database")
+    res.send("Failed to create user")
   }
 });
 

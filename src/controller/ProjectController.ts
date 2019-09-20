@@ -1,5 +1,6 @@
 import {getConnection} from "typeorm";
 import { Project } from "../entity/Project";
+import { Skill } from "../entity/Skill";
 
 export class ProjectController {
     addProject(project:Project){
@@ -16,11 +17,28 @@ export class ProjectController {
     }
 
     getProjectById(idExt:number){
-        const one =  getConnection()
+        return  getConnection()
             .getRepository(Project)
             .createQueryBuilder("p")
             .where("p.id = :id", { id: idExt })
             .getOne();
-        return one
+    }
+
+    getProjectsByOwner(idExt:number){
+        return getConnection()
+            .getRepository(Project)
+            .createQueryBuilder("p")
+            .where("p.ownerUser = :idOwnerUser", { idOwnerUser: idExt })
+            .getMany();
+    }
+
+    getNeedsSkills(){
+        return getConnection()
+             .getRepository(Project)
+            .createQueryBuilder("p")
+            .leftJoin('p.skills', 'Skill')
+            .getMany();
+
+        
     }
 }

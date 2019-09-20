@@ -1,5 +1,5 @@
 import { njwtSecret } from "../config/jwt";
-
+import { Request } from "express"
 let nJwt = require('njwt');
 
 export class SessionController {
@@ -18,7 +18,7 @@ export class SessionController {
         return token
     }
 
-    validToken(token:string){
+    validateToken(token:string){
         try{
             let verifiedJwt = nJwt.verify(token,njwtSecret);
             return verifiedJwt

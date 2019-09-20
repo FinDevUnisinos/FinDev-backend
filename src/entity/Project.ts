@@ -32,7 +32,7 @@ export class Project extends BaseEntity {
 
     @ManyToMany(type => Skill)
     @JoinTable({name: "SkillProject"})
-    skill: Skill[];
+    skills: Skill[];
 
     @ManyToMany(type => User)
     @JoinTable({name: "UserWorkingProject"})
