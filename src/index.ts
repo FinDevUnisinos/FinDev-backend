@@ -5,6 +5,7 @@ import { UserController } from "./controller/UserController";
 import { User } from "./entity/User";
 import bodyParser from "body-parser";
 import cors from 'cors'
+import { SessionController } from "./controller/SessionController";
 
 const app = express();
 app.use(cors())
@@ -28,8 +29,8 @@ app.get('/api/user/all', async (req, res) => {
 }
 */
 app.post('/api/user/validToken',jsonParser, (req,res) =>{
-  let uc= new UserController
-  res.send(uc.validToken(req.body.token))
+  let session = new SessionController
+  res.send(session.validToken(req.body.token))
 })
 
 /* ONLY FOR TESTS of convert passwd
@@ -38,8 +39,8 @@ app.post('/api/user/validToken',jsonParser, (req,res) =>{
 }
 */
 app.post('/api/user/hassPass',jsonParser, (req,res) =>{
-  let ucGlobal= new UserController
-  let converted =ucGlobal.hashPassword(req.body.password)
+  let session = new SessionController
+  let converted =session.hashPassword(req.body.password)
   res.send(converted)
 });
 
@@ -53,12 +54,13 @@ JSON Default for find email and passwd
 app.post('/api/user/login', jsonParser, async (req, res) => {
   asyncConnection().then(async connection => {
     let uc= new UserController
+    let session = new SessionController
     let email = req.body.email
-    let password = uc.hashPassword(req.body.password)
+    let password = session.hashPassword(req.body.password)
     if ((await uc.veryfyPassword(email,password))!==undefined) {
       let user = await uc.getUserByEmail(email)
       let name = user.name
-      res.send(uc.generateToken(name, email))
+      res.send(session.generateToken(name, email))
     }
     else{
       res.status(401).send(false)
@@ -91,13 +93,13 @@ JSON Default for Insert
 */
 app.post('/api/user/insert', jsonParser, async (req, res) => {
   try {
-      let createdUser = new User()
+      let session = new SessionController
       let uc= new UserController
- 
+      let createdUser = new User() 
       createdUser.NewUser(
         req.body.name,
         req.body.email,
-        uc.hashPassword(req.body.password),
+        session.hashPassword(req.body.password),
         req.body.usertype
       )
       asyncConnection().then(async () => {
