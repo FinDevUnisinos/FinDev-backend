@@ -21,40 +21,7 @@ app.get('/', (req, res) => {
   res.send('Running');
 });
 
-app.post('/api/project/allByOwner',jsonParser, async (req, res, next) => {
-  var token = req.headers['x-access-token']
-  if (token) {
-    let validToken = sessionController.validateToken(token.toString())
-    if(validToken!=undefined){
-      asyncConnection().then(async () => {
-        let user = await userController.getUserByEmail(validToken.body.email)
-        res.send(await projectController.getProjectsByOwner(user.id))
-      })
-    } else {
-      res.send("Invalid Token")
-    }
-  } else{
-    res.send("Pass some Token in header")
-  }
-})
-
-app.get('/api/user/all',jsonParser, async (req, res) => {
-  asyncConnection().then(async () => {
-      let userController= new UserController
-      res.send(await userController.getUsers())
-  })
-});
-
-app.post('/api/user/validToken',jsonParser, (req,res) =>{
-  let session = new SessionController
-  res.send(session.validateToken(req.body.token))
-})
-
-app.post('/api/user/hassPass',jsonParser, (req,res) =>{
-  let session = new SessionController
-  let converted =session.hashPassword(req.body.password)
-  res.send(converted)
-});
+//region requests to SESSION
 
 app.post('/api/user/login',jsonParser, async (req, res) => {
   asyncConnection().then(async connection => {
@@ -70,6 +37,17 @@ app.post('/api/user/login',jsonParser, async (req, res) => {
     }
   })  
 })
+
+//endregion requests to SESSION
+
+
+//region requests to USER
+
+app.get('/api/user/all',jsonParser, async (req, res) => {
+  asyncConnection().then(async () => {
+      res.send(await userController.getUsers())
+  })
+});
 
 app.post('/api/user/oneByEmail',jsonParser, async (req, res) => {
   asyncConnection().then(async () => {
@@ -99,6 +77,40 @@ app.post('/api/user/insert',jsonParser, async (req, res) => {
     res.send("Failed to create user")
   }
 });
+//endregion requests to USER
+
+//region requests to PROJECT
+
+app.post('/api/project/allByOwner',jsonParser, async (req, res, next) => {
+  var token = req.headers['x-access-token']
+  if (token) {
+    let validToken = sessionController.validateToken(token.toString())
+    if(validToken!=undefined){
+      asyncConnection().then(async () => {
+        let user = await userController.getUserByEmail(validToken.body.email)
+        res.send(await projectController.getProjectsByOwner(user.id))
+      })
+    } else {
+      res.status(400).send("Invalid Token")
+    }
+  } else{
+    res.status(400).send("Pass some Token in header")
+  }
+})
+
+//endregion requests to PROJECT
+
+//region requests to tests Only
+
+app.post('/api/user/validToken',jsonParser, (req,res) =>{
+  res.send(sessionController.validateToken(req.body.token))
+})
+
+app.post('/api/user/hassPass',jsonParser, (req,res) =>{
+  let converted =sessionController.hashPassword(req.body.password)
+  res.send(converted)
+});
+//endregion requests to tests Only
 
 app.listen(port, err => {
   if (err) {

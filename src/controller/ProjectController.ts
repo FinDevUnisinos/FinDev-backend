@@ -32,13 +32,4 @@ export class ProjectController {
             .getMany();
     }
 
-    getNeedsSkills(){
-        return getConnection()
-             .getRepository(Project)
-            .createQueryBuilder("p")
-            .leftJoin('p.skills', 'Skill')
-            .getMany();
-
-        
-    }
 }
