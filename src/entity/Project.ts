@@ -42,4 +42,16 @@ export class Project extends BaseEntity {
     @JoinTable({name: "UserInterestProject"})
     interests: User[];
 
+    newProject(
+        name:string, 
+        description:string, 
+        closed: boolean,
+        ownerUser:User
+        ) {
+        this.name = name
+        this.description = description
+        this.closed = false
+        this.ownerUser = ownerUser
+    }
+
 }
