@@ -28,7 +28,7 @@ export class UserController {
         const one =  getConnection()
             .getRepository(User)
             .createQueryBuilder("u")
-            .where("u.email = :email", { email: emailExt })
+            .where("u.email like :email", { email: emailExt })
             .getOne();
         return one
     }

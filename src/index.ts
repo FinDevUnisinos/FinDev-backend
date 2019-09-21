@@ -10,8 +10,6 @@ import cors from 'cors'
 
 const app = express();
 app.use(cors())
-app.use(bodyParser.json())
-
 const port = 3000;
 
 var jsonParser = bodyParser.json()
@@ -23,7 +21,7 @@ app.get('/', (req, res) => {
   res.send('Running');
 });
 
-app.post('/api/project/allByOwner', async (req, res, next) => {
+app.post('/api/project/allByOwner',jsonParser, async (req, res, next) => {
   var token = req.headers['x-access-token']
   if (token) {
     let validToken = sessionController.validateToken(token.toString())
@@ -40,25 +38,25 @@ app.post('/api/project/allByOwner', async (req, res, next) => {
   }
 })
 
-app.get('/api/user/all', async (req, res) => {
+app.get('/api/user/all',jsonParser, async (req, res) => {
   asyncConnection().then(async () => {
       let userController= new UserController
       res.send(await userController.getUsers())
   })
 });
 
-app.post('/api/user/validToken', (req,res) =>{
+app.post('/api/user/validToken',jsonParser, (req,res) =>{
   let session = new SessionController
   res.send(session.validateToken(req.body.token))
 })
 
-app.post('/api/user/hassPass', (req,res) =>{
+app.post('/api/user/hassPass',jsonParser, (req,res) =>{
   let session = new SessionController
   let converted =session.hashPassword(req.body.password)
   res.send(converted)
 });
 
-app.post('/api/user/login', async (req, res) => {
+app.post('/api/user/login',jsonParser, async (req, res) => {
   asyncConnection().then(async connection => {
     let email = req.body.email
     let password = sessionController.hashPassword(req.body.password)
@@ -73,18 +71,18 @@ app.post('/api/user/login', async (req, res) => {
   })  
 })
 
-app.post('/api/user/oneByEmail', async (req, res) => {
+app.post('/api/user/oneByEmail',jsonParser, async (req, res) => {
   asyncConnection().then(async () => {
     let email = req.body.email
     res.send(await userController.getUserByEmail(email))
   })  
 })
 
-app.post('/api/user/insert', async (req, res) => {
+app.post('/api/user/insert',jsonParser, async (req, res) => {
   try {
     //find an existing user
-    let user = await userController.getUserByEmail(req.body.email);
-    if (user) return res.status(400).send("User already registered.");
+    let user = await userController.getUserByEmail(req.body.email.toString());
+    if (user.email!=undefined) return res.status(400).send("User already registered.");
 
     let createdUser = new User() 
     createdUser.NewUser(
