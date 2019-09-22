@@ -8,20 +8,20 @@ import { ProjectController } from "../controller/ProjectController";
 import { UserTypes } from "../entity/UserType";
 import { Project } from "../entity/Project";
 
-export let projectApp = express();
-var jsonParser = bodyParser.json()
-let sessionController = new SessionController
-let projectController = new ProjectController
-let userController= new UserController
+export const projectApp = express();
+const jsonParser = bodyParser.json()
+const sessionController = new SessionController
+const projectController = new ProjectController
+const userController= new UserController
 
 //region requests to PROJECT
 projectApp.post('/api/project/allByOwner',jsonParser, async (req, res, next) => {
-    var token = req.headers['x-access-token']
+  const token = req.headers['x-access-token']
     if (token) {
-      let validToken = sessionController.validateToken(token.toString())
+      const validToken = sessionController.validateToken(token.toString())
       if(validToken!=undefined){
         asyncConnection().then(async () => {
-          let user = await userController.getUserByEmail(validToken.body.email)
+          const user = await userController.getUserByEmail(validToken.body.email)
           res.send(await projectController.getProjectsByOwner(user))
         })
       } else {
@@ -33,14 +33,14 @@ projectApp.post('/api/project/allByOwner',jsonParser, async (req, res, next) => 
 });
   
 projectApp.post('/api/project/insert',jsonParser, async (req, res, next) => {
-    var token = req.headers['x-access-token']
+  const token = req.headers['x-access-token']
     if (token) {
-      let validToken = sessionController.validateToken(token.toString())
+      const validToken = sessionController.validateToken(token.toString())
       if(validToken!=undefined){
         asyncConnection().then(async () => {    
-          let user = await userController.getUserByEmail(validToken.body.email.toString())
+          const user = await userController.getUserByEmail(validToken.body.email.toString())
           if(user.userType === UserTypes.COMPANY){
-            let project = new Project
+            const project = new Project
             project.newProject(
               req.body.name,
               req.body.description,
@@ -62,12 +62,12 @@ projectApp.post('/api/project/insert',jsonParser, async (req, res, next) => {
 });
   
 projectApp.post('/api/project/skills',jsonParser, async (req, res, next) => {
-    var token = req.headers['x-access-token']
+  const token = req.headers['x-access-token']
     if (token) {
-      let validToken = sessionController.validateToken(token.toString())
+      const validToken = sessionController.validateToken(token.toString())
       if(validToken!=undefined){
         asyncConnection().then(async () => {    
-          let user = await userController.getUserByEmail(validToken.body.email.toString())
+          const user = await userController.getUserByEmail(validToken.body.email.toString())
           res.send(await projectController.getProjectsWithSkills(user))
         })
       } else {
