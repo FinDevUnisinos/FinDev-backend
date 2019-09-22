@@ -1,5 +1,4 @@
 import { njwtSecret } from "../config/jwt";
-import { Request } from "express"
 let nJwt = require('njwt');
 
 export class SessionController {
