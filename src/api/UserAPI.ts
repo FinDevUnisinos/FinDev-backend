@@ -9,6 +9,7 @@ import { User } from "../entity/User";
 export let userApp = express();
 var jsonParser = bodyParser.json()
 let sessionController = new SessionController
+let userController = new UserController
 
 userApp.post('/api/user/login',jsonParser, async (req, res) => {
     let userController= new UserController
@@ -63,5 +64,22 @@ userApp.post('/api/user/insert',jsonParser, async (req, res) => {
       })
     } catch (error) {
       res.send("Failed to create user")
+    }
+});
+
+userApp.post('/api/user/skills',jsonParser, async (req, res, next) => {
+    var token = req.headers['x-access-token']
+    if (token) {
+      let validToken = sessionController.validateToken(token.toString())
+      if(validToken!=undefined){
+        asyncConnection().then(async () => {    
+          let user = await userController.getUserByEmail(validToken.body.email.toString())
+          res.send(await userController.getUsersWithSkills(user))
+        })
+      } else {
+        res.status(400).send("Invalid Token")
+      }
+    } else{
+      res.status(400).send("Pass some Token in header")
     }
 });

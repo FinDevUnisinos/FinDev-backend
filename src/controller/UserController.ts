@@ -27,6 +27,7 @@ export class UserController {
             .getMany(); 
         }      
     }
+    
     getUserById(idExt:number){
         const one =  getConnection()
             .getRepository(User)
