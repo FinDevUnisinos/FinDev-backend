@@ -1,4 +1,4 @@
-import {getConnection} from "typeorm";
+import {getConnection, createQueryBuilder} from "typeorm";
 import {User} from "../entity/User";
 
 export class UserController {
@@ -15,6 +15,18 @@ export class UserController {
         return getConnection().manager.find(User);
     }
 
+    getUsersWithSkills(user:User){
+        if(user===undefined){
+            return createQueryBuilder(User)
+            .leftJoinAndSelect("User.skills", "skill")
+            .getMany(); 
+        } else{
+            return createQueryBuilder(User)
+            .leftJoinAndSelect("User.skills", "skill")
+            .where({id: user.id})
+            .getMany(); 
+        }      
+    }
     getUserById(idExt:number){
         const one =  getConnection()
             .getRepository(User)

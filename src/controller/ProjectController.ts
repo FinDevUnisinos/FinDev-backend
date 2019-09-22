@@ -1,6 +1,6 @@
-import {getConnection} from "typeorm";
+import {getConnection, createQueryBuilder} from "typeorm";
 import { Project } from "../entity/Project";
-import { Skill } from "../entity/Skill";
+import { User } from "../entity/User";
 
 export class ProjectController {
     addProject(project:Project){
@@ -15,7 +15,20 @@ export class ProjectController {
     getProjects() {
         return getConnection().manager.find(Project);
     }
-
+ 
+    getProjectsWithSkills(user:User){
+        if(user===undefined){
+            return createQueryBuilder(Project)
+            .leftJoinAndSelect("Project.skills", "skill")
+            .getMany(); 
+        } else{
+            return createQueryBuilder(Project)
+            .leftJoinAndSelect("Project.skills", "skill")
+            .where({ownerUser: user})
+            .getMany(); 
+        }      
+    }
+    
     getProjectById(idExt:number){
         return  getConnection()
             .getRepository(Project)
@@ -24,12 +37,10 @@ export class ProjectController {
             .getOne();
     }
 
-    getProjectsByOwner(idExt:number){
+    getProjectsByOwner(user:User){
         return getConnection()
-            .getRepository(Project)
-            .createQueryBuilder("p")
-            .where("p.ownerUser = :idOwnerUser", { idOwnerUser: idExt })
-            .getMany();
+                .getRepository(Project)
+                .find({ownerUser: user})
     }
-
+   
 }

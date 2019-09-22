@@ -86,7 +86,7 @@ app.post('/api/project/allByOwner',jsonParser, async (req, res, next) => {
     if(validToken!=undefined){
       asyncConnection().then(async () => {
         let user = await userController.getUserByEmail(validToken.body.email)
-        res.send(await projectController.getProjectsByOwner(user.id))
+        res.send(await projectController.getProjectsByOwner(user))
       })
     } else {
       res.status(400).send("Invalid Token")
@@ -116,6 +116,23 @@ app.post('/api/project/insert',jsonParser, async (req, res, next) => {
         } else {
           res.status(403).send("You Have no access to create a project")
         }
+      })
+    } else {
+      res.status(400).send("Invalid Token")
+    }
+  } else{
+    res.status(400).send("Pass some Token in header")
+  }
+});
+
+app.post('/api/project/skills',jsonParser, async (req, res, next) => {
+  var token = req.headers['x-access-token']
+  if (token) {
+    let validToken = sessionController.validateToken(token.toString())
+    if(validToken!=undefined){
+      asyncConnection().then(async () => {    
+        let user = await userController.getUserByEmail(validToken.body.email.toString())
+        res.send(await projectController.getProjectsWithSkills(user))
       })
     } else {
       res.status(400).send("Invalid Token")
