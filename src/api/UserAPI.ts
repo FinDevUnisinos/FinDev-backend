@@ -7,11 +7,13 @@ import { SessionController } from "../controller/SessionController";
 import { User } from "../entity/User";
 
 export const userApp = express();
-const jsonParser = bodyParser.json()
+userApp.use(bodyParser.urlencoded({ extended: true }));
+userApp.use(bodyParser.json());
+
 const sessionController = new SessionController
 const userController = new UserController
 
-userApp.post('/api/user/login',jsonParser, async (req, res) => {
+userApp.post('/api/user/login', async (req, res) => {
     const userController= new UserController
     asyncConnection().then(async connection => {
       const email = req.body.email
@@ -27,14 +29,14 @@ userApp.post('/api/user/login',jsonParser, async (req, res) => {
     })  
   });
 
-userApp.get('/api/user/all',jsonParser, async (req, res) => {
+userApp.get('/api/user/all', async (req, res) => {
     const userController= new UserController
     asyncConnection().then(async () => {
         res.send(await userController.getUsers())
     })
 });
   
-userApp.post('/api/user/oneByEmail',jsonParser, async (req, res) => {
+userApp.post('/api/user/oneByEmail', async (req, res) => {
     const userController= new UserController
     asyncConnection().then(async () => {
       const email = req.body.email
@@ -42,7 +44,7 @@ userApp.post('/api/user/oneByEmail',jsonParser, async (req, res) => {
     })  
 })
   
-userApp.post('/api/user/insert',jsonParser, async (req, res) => {
+userApp.post('/api/user/insert', async (req, res) => {
     const userController= new UserController
     try {
       //find an existing user
@@ -67,7 +69,7 @@ userApp.post('/api/user/insert',jsonParser, async (req, res) => {
     }
 });
 
-userApp.post('/api/user/skills',jsonParser, async (req, res, next) => {
+userApp.post('/api/user/skills', async (req, res, next) => {
     const token = req.headers['x-access-token']
     if (token) {
       const validToken = sessionController.validateToken(token.toString())
