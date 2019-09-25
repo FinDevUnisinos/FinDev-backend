@@ -27,10 +27,10 @@ projectApp.post('/api/project/allByOwner', async (req, res, next) => {
           res.send(await projectController.getProjectsByOwner(user))
         })
       } else {
-        res.status(400).send("Invalid Token")
+        res.status(401).send("Invalid Token")
       }
     } else{
-      res.status(400).send("Pass some Token in header")
+      res.status(401).send("Pass some Token in header")
     }
 });
   
@@ -63,10 +63,10 @@ projectApp.post('/api/project/insert', async (req, res, next) => {
           }
         })
       } else {
-        res.status(400).send("Invalid Token")
+        res.status(401).send("Invalid Token")
       }
     } else{
-      res.status(400).send("Pass some Token in header")
+      res.status(401).send("Pass some Token in header")
     }
 });
   
@@ -80,10 +80,10 @@ projectApp.post('/api/project/skills', async (req, res, next) => {
           res.send(await projectController.getProjectsWithSkills(user))
         })
       } else {
-        res.status(400).send("Invalid Token")
+        res.status(401).send("Invalid Token")
       }
     } else{
-      res.status(400).send("Pass some Token in header")
+      res.status(401).send("Pass some Token in header")
     }
 });
 

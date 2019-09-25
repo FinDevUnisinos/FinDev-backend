@@ -79,9 +79,9 @@ userApp.post('/api/user/skills', async (req, res, next) => {
           res.send(await userController.getUsersWithSkills(user))
         })
       } else {
-        res.status(400).send("Invalid Token")
+        res.status(401).send("Invalid Token")
       }
     } else{
-      res.status(400).send("Pass some Token in header")
+      res.status(401).send("Pass some Token in header")
     }
 });
