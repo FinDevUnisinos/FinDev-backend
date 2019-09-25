@@ -34,6 +34,13 @@ projectApp.post('/api/project/allByOwner', async (req, res, next) => {
     }
 });
   
+// projectApp.post('/api/project/all', async (req, res, next) => {
+//   asyncConnection().then(async () => {
+//     res.send(await projectController.getWorkersOfProject(1))
+//   })
+// })
+
+
 projectApp.post('/api/project/insert', async (req, res, next) => {
   const token = req.headers['x-access-token']
     if (token) {

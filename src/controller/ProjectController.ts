@@ -28,6 +28,26 @@ export class ProjectController {
             .getMany(); 
         }      
     }
+
+    getWorkersOfProject(idExt:number){
+        return getConnection()
+        .getRepository(Project)
+        .createQueryBuilder("p")
+            .leftJoinAndSelect("p.workers", "user")
+            .where("p.id = :id", { id: idExt })
+            .getMany();       
+    }
+
+
+    getInterestsOfProject(idExt:number){
+        return getConnection()
+        .getRepository(Project)
+        .createQueryBuilder("p")
+            .leftJoinAndSelect("p.interests", "user")
+            .where("p.id = :id", { id: idExt })
+            .getMany();       
+    }
+
     
     getProjectById(idExt:number){
         return  getConnection()
