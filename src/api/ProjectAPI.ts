@@ -24,7 +24,7 @@ projectApp.post('/api/project/allByOwner', async (req, res, next) => {
       if(validToken!=undefined){
         asyncConnection().then(async () => {
           const user = await userController.getUserByEmail(validToken.body.email)
-          res.send(await projectController.getProjectsByOwner(user))
+          res.send(await projectController.getProjectsWithSkills(user))
         })
       } else {
         res.status(401).send("Invalid Token")
@@ -34,11 +34,11 @@ projectApp.post('/api/project/allByOwner', async (req, res, next) => {
     }
 });
   
-// projectApp.post('/api/project/all', async (req, res, next) => {
-//   asyncConnection().then(async () => {
-//     res.send(await projectController.getWorkersOfProject(1))
-//   })
-// })
+projectApp.post('/api/project/all', async (req, res, next) => {
+        asyncConnection().then(async () => {
+          res.send(await projectController.getProjectsWithSkills(undefined))
+        })
+});
 
 
 projectApp.post('/api/project/insert', async (req, res, next) => {

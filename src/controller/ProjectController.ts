@@ -38,7 +38,6 @@ export class ProjectController {
             .getMany();       
     }
 
-
     getInterestsOfProject(idExt:number){
         return getConnection()
         .getRepository(Project)
@@ -48,7 +47,6 @@ export class ProjectController {
             .getMany();       
     }
 
-    
     getProjectById(idExt:number){
         return  getConnection()
             .getRepository(Project)
