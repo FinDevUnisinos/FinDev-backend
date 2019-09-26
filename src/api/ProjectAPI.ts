@@ -7,6 +7,7 @@ import { SessionController } from "../controller/SessionController";
 import { ProjectController } from "../controller/ProjectController";
 import { UserTypes } from "../entity/UserType";
 import { Project } from "../entity/Project";
+import { Route } from "../config/route";
 
 export const projectApp = express();
 projectApp.use(bodyParser.urlencoded({ extended: true }));
@@ -15,9 +16,10 @@ projectApp.use(bodyParser.json());
 const sessionController = new SessionController
 const projectController = new ProjectController
 const userController= new UserController
+const route = new Route
 
 //region requests to PROJECT
-projectApp.post('/api/project/allByOwner', async (req, res, next) => {
+projectApp.post(route.getProjectRoute()+'/allByOwner', async (req, res, next) => {
   const token = req.headers['x-access-token']
   if (token) {
     const validToken = sessionController.validateToken(token.toString())
@@ -34,14 +36,14 @@ projectApp.post('/api/project/allByOwner', async (req, res, next) => {
   }
 });
   
-projectApp.post('/api/project/all', async (req, res, next) => {
+projectApp.post(route.getProjectRoute()+'/all', async (req, res, next) => {
   asyncConnection().then(async () => {
     res.send(await projectController.getProjectsWithSkills(undefined))
   })
 });
 
 
-projectApp.post('/api/project/insert', async (req, res, next) => {
+projectApp.post(route.getProjectRoute()+'/insert', async (req, res, next) => {
   const token = req.headers['x-access-token']
   if (token) {
     const validToken = sessionController.validateToken(token.toString())
@@ -70,7 +72,7 @@ projectApp.post('/api/project/insert', async (req, res, next) => {
   }
 });
   
-projectApp.post('/api/project/skills', async (req, res, next) => {
+projectApp.post(route.getProjectRoute()+'/skills', async (req, res, next) => {
   const token = req.headers['x-access-token']
   if (token) {
     const validToken = sessionController.validateToken(token.toString())

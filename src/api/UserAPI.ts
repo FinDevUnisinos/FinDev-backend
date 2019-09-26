@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import { UserController } from "../controller/UserController";
 import { SessionController } from "../controller/SessionController";
 import { User } from "../entity/User";
+import { Route } from "../config/route";
 
 export const userApp = express();
 userApp.use(bodyParser.urlencoded({ extended: true }));
@@ -12,8 +13,9 @@ userApp.use(bodyParser.json());
 
 const sessionController = new SessionController
 const userController = new UserController
+const route = new Route
 
-userApp.post('/api/user/login', async (req, res) => {
+userApp.post(route.getUserRoute()+'/login', async (req, res) => {
   const userController= new UserController
   asyncConnection().then(async connection => {
     const email = req.body.email
@@ -29,14 +31,14 @@ userApp.post('/api/user/login', async (req, res) => {
   })  
   });
 
-userApp.get('/api/user/all', async (req, res) => {
+userApp.get(route.getUserRoute()+'/all', async (req, res) => {
   const userController= new UserController
   asyncConnection().then(async () => {
       res.send(await userController.getUsers())
   })
 });
   
-userApp.post('/api/user/oneByEmail', async (req, res) => {
+userApp.post(route.getUserRoute()+'/oneByEmail', async (req, res) => {
   const userController= new UserController
   asyncConnection().then(async () => {
     const email = req.body.email
@@ -44,7 +46,7 @@ userApp.post('/api/user/oneByEmail', async (req, res) => {
   })  
 })
   
-userApp.post('/api/user/insert', async (req, res) => {
+userApp.post(route.getUserRoute()+'/insert', async (req, res) => {
   const userController= new UserController
   try {
     //find an existing user
@@ -69,7 +71,7 @@ userApp.post('/api/user/insert', async (req, res) => {
   }
 });
 
-userApp.post('/api/user/skills', async (req, res, next) => {
+userApp.post(route.getUserRoute()+'/skills', async (req, res, next) => {
   const token = req.headers['x-access-token']
   if (token) {
     const validToken = sessionController.validateToken(token.toString())
