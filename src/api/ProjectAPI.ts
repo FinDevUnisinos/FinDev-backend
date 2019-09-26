@@ -59,7 +59,7 @@ projectApp.post('/api/project/insert', async (req, res, next) => {
           await projectController.addProject(project)
           res.send("Project successfully created")
         } else {
-          res.status(403).send("You Have no access to create a project")
+          res.status(403).send("You cannot create a project since you aren't a company")
         }
       })
     } else {
