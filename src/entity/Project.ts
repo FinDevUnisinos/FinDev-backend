@@ -47,7 +47,7 @@ export class Project extends BaseEntity {
         description:string, 
         closed: boolean,
         ownerUser:User
-        ) {
+        ):void {
         this.name = name
         this.description = description
         this.closed = false

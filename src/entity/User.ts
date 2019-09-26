@@ -41,7 +41,7 @@ export class User extends BaseEntity {
         email:string, 
         password:string,
         userType:string,
-        ) {
+        ):void {
         this.name = name
         this.email = email
         this.password = password

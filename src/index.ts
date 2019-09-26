@@ -5,7 +5,7 @@ import cors from 'cors'
 
 import { userApp } from "./api/UserAPI";
 import { projectApp } from "./api/ProjectAPI";
-import { testsApp } from "./api/TestsAPI";
+import { validatorApp } from "./api/ValidatorAPI";
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(cors())
 app.use(userApp)
 app.use(projectApp)
-app.use(testsApp)
+app.use(validatorApp)
 
 const port = 3000;
 

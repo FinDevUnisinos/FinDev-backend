@@ -2,7 +2,7 @@ import {getConnection, createQueryBuilder} from "typeorm";
 import {User} from "../entity/User";
 
 export class UserController {
-    addUser(usr:User){
+    addUser(usr:User):void{
         getConnection()
         .createQueryBuilder()
         .insert()
@@ -11,12 +11,12 @@ export class UserController {
         .execute();
     }
     
-    getUsers() {
+    getUsers():Promise<User[]>{
         return getConnection().manager.find(User);
     }
 
-    getUsersWithSkills(user:User){
-        if(user===undefined){
+    getUsersWithSkills(user:User):Promise<User[]>{
+        if(!user){
             return createQueryBuilder(User)
             .leftJoinAndSelect("User.skills", "skill")
             .getMany(); 
@@ -28,7 +28,7 @@ export class UserController {
         }      
     }
     
-    getUserById(idExt:number){
+    getUserById(idExt:number):Promise<User>{
         const one =  getConnection()
             .getRepository(User)
             .createQueryBuilder("u")
@@ -37,7 +37,7 @@ export class UserController {
         return one
     }
 
-    getUserByEmail(emailExt:string){
+    getUserByEmail(emailExt:string):Promise<User>{
         const one =  getConnection()
             .getRepository(User)
             .createQueryBuilder("u")
@@ -46,7 +46,7 @@ export class UserController {
         return one
     }
 
-    veryfyPassword(emailExt:string, passwordExt:string){
+    veryfyPassword(emailExt:string, passwordExt:string):Promise<User>{
         const one =  getConnection()
             .getRepository(User)
             .createQueryBuilder("u")

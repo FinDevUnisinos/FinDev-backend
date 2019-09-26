@@ -3,7 +3,7 @@ import { Project } from "../entity/Project";
 import { User } from "../entity/User";
 
 export class ProjectController {
-    addProject(project:Project){
+    addProject(project:Project):void{
         getConnection()
         .createQueryBuilder()
         .insert()
@@ -12,12 +12,12 @@ export class ProjectController {
         .execute();
     }
     
-    getProjects() {
+    getProjects():Promise<Project[]>{
         return getConnection().manager.find(Project);
     }
  
-    getProjectsWithSkills(user:User){
-        if(user===undefined){
+    getProjectsWithSkills(user:User):Promise<Project[]>{
+        if(!user){
             return createQueryBuilder(Project)
             .leftJoinAndSelect("Project.skills", "skill")
             .getMany(); 
@@ -29,7 +29,7 @@ export class ProjectController {
         }      
     }
 
-    getWorkersOfProject(idExt:number){
+    getWorkersOfProject(idExt:number):Promise<Project[]>{
         return getConnection()
         .getRepository(Project)
         .createQueryBuilder("p")
@@ -38,7 +38,7 @@ export class ProjectController {
             .getMany();       
     }
 
-    getInterestsOfProject(idExt:number){
+    getInterestsOfProject(idExt:number):Promise<Project[]>{
         return getConnection()
         .getRepository(Project)
         .createQueryBuilder("p")
@@ -47,7 +47,7 @@ export class ProjectController {
             .getMany();       
     }
 
-    getProjectById(idExt:number){
+    getProjectById(idExt:number):Promise<Project>{
         return  getConnection()
             .getRepository(Project)
             .createQueryBuilder("p")
@@ -55,7 +55,7 @@ export class ProjectController {
             .getOne();
     }
 
-    getProjectsByOwner(user:User){
+    getProjectsByOwner(user:User):Promise<Project[]>{
         return getConnection()
                 .getRepository(Project)
                 .find({ownerUser: user})

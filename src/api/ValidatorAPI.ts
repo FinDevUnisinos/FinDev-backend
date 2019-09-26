@@ -7,15 +7,15 @@ import bodyParser from "body-parser";
 
 const sessionController = new SessionController
 
-export const testsApp = express();
-testsApp.use(bodyParser.urlencoded({ extended: true }));
-testsApp.use(bodyParser.json());
+export const validatorApp = express();
+validatorApp.use(bodyParser.urlencoded({ extended: true }));
+validatorApp.use(bodyParser.json());
 
-testsApp.post('/api/test/validToken', (req,res) =>{
+validatorApp.post('/api/validator/validToken', (req,res) =>{
   res.send(sessionController.validateToken(req.body.token))
 })
 
-testsApp.post('/api/test/hassPass', (req,res) =>{
+validatorApp.post('/api/validator/hassPass', (req,res) =>{
   const converted =sessionController.hashPassword(req.body.password)
   res.send(converted)
 });

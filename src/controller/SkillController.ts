@@ -2,7 +2,7 @@ import {getConnection} from "typeorm";
 import {Skill} from "../entity/Skill";
 
 export class SkillController {
-    addSkill(skill:Skill){
+    addSkill(skill:Skill):void{
         getConnection()
         .createQueryBuilder()
         .insert()
@@ -11,11 +11,11 @@ export class SkillController {
         .execute();
     }
     
-    getSkills() {
+    getSkills(): Promise<Skill[]>  {
         return getConnection().manager.find(Skill);
     }
 
-    getSkillById(idExt:number){
+    getSkillById(idExt:number): Promise<Skill>{
         const one =  getConnection()
             .getRepository(Skill)
             .createQueryBuilder("s")

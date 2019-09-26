@@ -3,7 +3,7 @@ let nJwt = require('njwt');
 
 export class SessionController {
 
-    generateToken(name: string, email: string){
+    generateToken(name: string, email: string):any{
         var claims = {
         "name": name,
         "email": email,
@@ -17,7 +17,7 @@ export class SessionController {
         return token
     }
 
-    validateToken(token:string){
+    validateToken(token:string):any{
         try{
             let verifiedJwt = nJwt.verify(token,njwtSecret);
             return verifiedJwt
@@ -26,7 +26,7 @@ export class SessionController {
         }
     }
 
-    hashPassword(password:string){
+    hashPassword(password:string):any{
         var hash = require('hash.js')
         return hash.sha256().update(password).digest('hex')
     }
