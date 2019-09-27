@@ -1,4 +1,3 @@
-const baseUrl = '/'
 const apiUrl = '/api'
 
 export class Route {
