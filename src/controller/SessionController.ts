@@ -22,7 +22,9 @@ export class SessionController {
             let verifiedJwt = nJwt.verify(token,njwtSecret);
             return verifiedJwt
         }catch(e){
+            console.log("CATCH validate Token")
             console.log(e);
+            return -1
         }
     }
 

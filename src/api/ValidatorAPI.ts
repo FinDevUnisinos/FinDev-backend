@@ -14,10 +14,10 @@ validatorApp.use(bodyParser.urlencoded({ extended: true }));
 validatorApp.use(bodyParser.json());
 
 validatorApp.post(route.getValidatorRoute()+'/validToken', (req,res) =>{
-  res.send(sessionController.validateToken(req.body.token))
+    res.send(sessionController.validateToken(req.body.token))
 })
 
 validatorApp.post(route.getValidatorRoute()+'/hassPass', (req,res) =>{
-  const converted =sessionController.hashPassword(req.body.password)
-  res.send(converted)
+    const converted =sessionController.hashPassword(req.body.password)
+    res.send(converted)
 });
