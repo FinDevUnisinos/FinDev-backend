@@ -1,11 +1,8 @@
-import {getConnection} from "typeorm";
+import {getConnection, createQueryBuilder} from "typeorm";
 import {User} from "../entity/User";
-import { njwtSecret } from "../config/jwt";
-
-let nJwt = require('njwt');
 
 export class UserController {
-    addUser(usr:User){
+    addUser(usr:User):void{
         getConnection()
         .createQueryBuilder()
         .insert()
@@ -14,11 +11,24 @@ export class UserController {
         .execute();
     }
     
-    getUsers() {
+    getUsers():Promise<User[]>{
         return getConnection().manager.find(User);
     }
 
-    getUserById(idExt:number){
+    getUsersWithSkills(user:User):Promise<User[]>{
+        if(!user){
+            return createQueryBuilder(User)
+            .leftJoinAndSelect("User.skills", "skill")
+            .getMany(); 
+        } else{
+            return createQueryBuilder(User)
+            .leftJoinAndSelect("User.skills", "skill")
+            .where({id: user.id})
+            .getMany(); 
+        }      
+    }
+    
+    getUserById(idExt:number):Promise<User>{
         const one =  getConnection()
             .getRepository(User)
             .createQueryBuilder("u")
@@ -27,16 +37,16 @@ export class UserController {
         return one
     }
 
-    getUserByEmail(emailExt:string){
+    getUserByEmail(emailExt:string):Promise<User>{
         const one =  getConnection()
             .getRepository(User)
             .createQueryBuilder("u")
-            .where("u.email = :email", { email: emailExt })
+            .where("u.email like :email", { email: emailExt })
             .getOne();
         return one
     }
 
-    veryfyPassword(emailExt:string, passwordExt:string){
+    veryfyPassword(emailExt:string, passwordExt:string):Promise<User>{
         const one =  getConnection()
             .getRepository(User)
             .createQueryBuilder("u")
@@ -44,34 +54,6 @@ export class UserController {
             .andWhere("u.password = :password", { password: passwordExt })
             .getOne();
         return one
-    }
-
-    generateToken(name: string, email: string){
-        var claims = {
-        "name": name,
-        "email": email,
-        "jti": "48c1dd1c-d526-4f06-a3af-6223695e2f89",
-        "iat": 1568777437,
-        "exp": 1568781037
-        }
-        var jwt = nJwt.create(claims,njwtSecret,"HS256");
-        var token = jwt.compact();
-
-        return token
-    }
-
-    validToken(token:string){
-        try{
-            let verifiedJwt = nJwt.verify(token,njwtSecret);
-            return verifiedJwt
-          }catch(e){
-            console.log(e);
-          }
-    }
-
-    hashPassword(password:string){
-        var hash = require('hash.js')
-        return hash.sha256().update(password).digest('hex')
-    }
+    }  
 
 }

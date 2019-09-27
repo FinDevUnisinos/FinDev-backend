@@ -5,8 +5,11 @@ import {
     BaseEntity,
     ManyToOne,
     JoinColumn,
+    ManyToMany,
+    JoinTable,
 } from "typeorm";
 import { User } from "./User";
+import { Skill } from "./Skill";
 
 @Entity("Project")
 export class Project extends BaseEntity {
@@ -26,5 +29,29 @@ export class Project extends BaseEntity {
     @ManyToOne(() => User, u => u.id)
     @JoinColumn({ name: "idOwnerUser"})
     ownerUser: User;
+
+    @ManyToMany(type => Skill)
+    @JoinTable({name: "SkillProject"})
+    skills: Skill[];
+
+    @ManyToMany(type => User)
+    @JoinTable({name: "UserWorkingProject"})
+    workers: User[];
+
+    @ManyToMany(type => User)
+    @JoinTable({name: "UserInterestProject"})
+    interests: User[];
+
+    newProject(
+        name:string, 
+        description:string, 
+        closed: boolean,
+        ownerUser:User
+        ):void {
+        this.name = name
+        this.description = description
+        this.closed = false
+        this.ownerUser = ownerUser
+    }
 
 }

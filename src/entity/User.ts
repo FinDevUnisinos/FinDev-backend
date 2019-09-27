@@ -3,7 +3,10 @@ import {
     Column,
     PrimaryGeneratedColumn, 
     BaseEntity,
+    ManyToMany,
+    JoinTable,
 } from "typeorm";
+import { Skill } from "./Skill";
 
 @Entity("User")
 export class User extends BaseEntity {
@@ -29,12 +32,16 @@ export class User extends BaseEntity {
     @Column({  type: "character varying" , length: 40 , nullable: false} )
     userType: string;
 
+    @ManyToMany(type => Skill)
+    @JoinTable({name: "SkillUser"})
+    skills: Skill[];
+
     NewUser(
         name:string, 
         email:string, 
         password:string,
         userType:string,
-        ) {
+        ):void {
         this.name = name
         this.email = email
         this.password = password

@@ -15,8 +15,8 @@ export async function asyncConnection() {
             entities: [
                 __dirname + "/entity/*.ts"
             ],
-            synchronize: true,
-            logging: false,
+            synchronize: true, //to activate sync database when change a collumn or table... 
+            logging: false, //to activate log of selects, inserts, updates...
             dropSchema: false
         })
     } catch (error) {
