@@ -11,6 +11,16 @@ Desenvolvimento de Software III
 * [reflect-metadata 0.1.13](https://www.npmjs.com/package/reflect-metadata)
 * [ts-node 8.4.1](https://www.npmjs.com/package/ts-node)
 
+Create a archive called ".env" on the same package.json folder (root folder), with this:
+```
+host = 'PUT HOST HERE'
+user = 'PUT USER NAME HERE'
+port = 5432
+database = 'PUT DATABASE NAME HERE'
+password = 'PUT PASSWORD HERE'
+scheme = 'PUT SCHEMA NAME HERE'
+```
+
 To run the project you have to install it's dependencies:
 ```
 npm install
