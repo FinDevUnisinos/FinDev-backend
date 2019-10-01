@@ -5,6 +5,18 @@ export class Route {
         return apiUrl + '/project'
     }
 
+    getProjectWorkersRoute(){
+        return this.getProjectRoute() + '/workers'
+    }
+
+    getProjectInterestsRoute(){
+        return this.getProjectRoute() + '/interests'
+    }
+
+    getProjectSkillsRoute(){
+        return this.getProjectRoute() + '/skills'
+    }
+
     getValidatorRoute(){
         return apiUrl + '/validator'
     }

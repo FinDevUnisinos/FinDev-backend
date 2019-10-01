@@ -11,6 +11,30 @@ export class ProjectController {
         .values(project)
         .execute();
     }
+
+    addSkillOnProject(projectId:number, skillId:number):void{
+        getConnection()
+        .createQueryBuilder()
+        .relation(Project, "skills")
+        .of(projectId)
+        .add(skillId);
+    }
+
+    addWorkerOnProject(projectId:number, userId:number):void{
+        getConnection()
+        .createQueryBuilder()
+        .relation(Project, "workers")
+        .of(projectId)
+        .add(userId);
+    }
+
+    addInterestOnProject(projectId:number, userId:number):void{
+        getConnection()
+        .createQueryBuilder()
+        .relation(Project, "interests")
+        .of(projectId)
+        .add(userId);
+    }
     
     getProjects():Promise<Project[]>{
         return getConnection().manager.find(Project);
