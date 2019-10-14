@@ -1,5 +1,8 @@
 import {getConnection, createQueryBuilder} from "typeorm";
 import {User} from "../entity/User";
+import { SkillController } from "./SkillController";
+import { SkillUser } from "../entity/SkillUser";
+import { Validator } from "../config/validator";
 
 export class UserController {
     addUser(usr:User):void{
@@ -15,16 +18,34 @@ export class UserController {
         return getConnection().manager.find(User);
     }
 
+    async addSkillOnUser(userId:number, skillId:number, level:number):Promise<void>{
+        let skillController = new SkillController
+        let userSkill = new SkillUser
+        let validator = new Validator
+        userSkill.level = validator.validateLevelSkill(level)
+        userSkill.user = await this.getUserById(userId)
+        userSkill.skill = await skillController.getSkillById(skillId)
+
+        getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(SkillUser)
+        .values(userSkill)
+        .execute();
+    }
+
     getUsersWithSkills(user:User):Promise<User[]>{
         if(!user){
             return createQueryBuilder(User)
-            .leftJoinAndSelect("User.skills", "skill")
-            .getMany(); 
+                .leftJoinAndSelect( "User.skillsUser","skillUser")
+                .leftJoinAndSelect( "skillUser.skill","skill")
+                .getMany(); 
         } else{
             return createQueryBuilder(User)
-            .leftJoinAndSelect("User.skills", "skill")
-            .where({id: user.id})
-            .getMany(); 
+                .leftJoinAndSelect( "User.skillsUser","skillUser")
+                .leftJoinAndSelect( "skillUser.skill","skill")
+                .where({id: user.id})
+                .getMany();   
         }      
     }
     

@@ -17,7 +17,7 @@ validatorApp.post(route.getValidatorRoute()+'/validToken', (req,res) =>{
     res.send(sessionController.validateToken(req.body.token))
 })
 
-validatorApp.post(route.getValidatorRoute()+'/hassPass', (req,res) =>{
+validatorApp.post(route.getValidatorRoute()+'/hashPass', (req,res) =>{
     const converted =sessionController.hashPassword(req.body.password)
     res.send(converted)
 });

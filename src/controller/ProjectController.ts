@@ -1,6 +1,9 @@
 import {getConnection, createQueryBuilder} from "typeorm";
 import { Project } from "../entity/Project";
 import { User } from "../entity/User";
+import { SkillProject } from "../entity/SkillProject";
+import { SkillController } from "./SkillController";
+import { Validator } from "../config/validator";
 
 export class ProjectController {
     addProject(project:Project):void{
@@ -12,12 +15,20 @@ export class ProjectController {
         .execute();
     }
 
-    addSkillOnProject(projectId:number, skillId:number):void{
+    async addSkillOnProject(projectId:number, skillId:number, level:number):Promise<void>{
+        let skillController = new SkillController
+        let projSkill = new SkillProject
+        let validator = new Validator
+        projSkill.level = validator.validateLevelSkill(level)
+        projSkill.project = await this.getProjectById(projectId)
+        projSkill.skill = await skillController.getSkillById(skillId)
+
         getConnection()
         .createQueryBuilder()
-        .relation(Project, "skills")
-        .of(projectId)
-        .add(skillId);
+        .insert()
+        .into(SkillProject)
+        .values(projSkill)
+        .execute();
     }
 
     addWorkerOnProject(projectId:number, userId:number):void{
@@ -43,13 +54,15 @@ export class ProjectController {
     getProjectsWithSkills(user:User):Promise<Project[]>{
         if(!user){
             return createQueryBuilder(Project)
-            .leftJoinAndSelect("Project.skills", "skill")
-            .getMany(); 
+                .leftJoinAndSelect( "Project.skillsProject","skillProject")
+                .leftJoinAndSelect( "skillProject.skill","skill")
+                .getMany(); 
         } else{
             return createQueryBuilder(Project)
-            .leftJoinAndSelect("Project.skills", "skill")
-            .where({ownerUser: user})
-            .getMany(); 
+                .leftJoinAndSelect( "Project.skillsProject","skillProject")
+                .leftJoinAndSelect( "skillProject.skill","skill")
+                .where({ownerUser: user.id})
+                .getMany();   
         }      
     }
 

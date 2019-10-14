@@ -7,6 +7,7 @@ import { SessionController } from "../controller/SessionController";
 import { User } from "../entity/User";
 import { Route } from "../config/route";
 import { authApp } from "./AuthAPI";
+import { UserTypes } from "../entity/UserType";
 
 export const userApp = express();
 userApp.use(bodyParser.urlencoded({ extended: true }));
@@ -72,7 +73,22 @@ userApp.post(route.getUserRoute()+'/insert', async (req, res) => {
 	}
 });
 
-userApp.post(route.getUserRoute()+'/skills', authApp, async (req, res, next) => {
+userApp.post(route.getUserSkillsRoute()+'/insert', authApp, async (req, res, next) => {
+    const validToken = sessionController.validateToken(req.headers['x-access-token'].toString())
+    asyncConnection().then(async () => {    
+        const user = await userController.getUserByEmail(validToken.body.email.toString())
+        if(user.userType === UserTypes.EMPLOYEE){
+            const skillId = Number.parseInt(req.body.skillId) 
+            const level = Number.parseInt(req.body.level) 
+            await userController.addSkillOnUser(user.id,skillId,level);
+            res.send("Skill successfully inserted on User")
+        } else {
+            res.status(403).send("You cannot insert a skill on a user since you aren't an EMPLOYEE")
+        }
+    })
+});
+
+userApp.post(route.getUserSkillsRoute()+'/all', authApp, async (req, res, next) => {
 	const validToken = sessionController.validateToken(req.headers['x-access-token'].toString())
 	asyncConnection().then(async () => {    
 		const user = await userController.getUserByEmail(validToken.body.email.toString())

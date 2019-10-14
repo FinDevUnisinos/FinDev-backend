@@ -25,4 +25,7 @@ export class Route {
         return apiUrl + '/user'
     }
 
+    getUserSkillsRoute(){
+        return this.getUserRoute() + '/skills'
+    }
 }

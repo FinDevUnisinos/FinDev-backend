@@ -7,9 +7,10 @@ import {
     JoinColumn,
     ManyToMany,
     JoinTable,
+    OneToMany,
 } from "typeorm";
 import { User } from "./User";
-import { Skill } from "./Skill";
+import { SkillProject } from "./SkillProject";
 
 @Entity("Project")
 export class Project extends BaseEntity {
@@ -30,10 +31,9 @@ export class Project extends BaseEntity {
     @JoinColumn({ name: "idOwnerUser"})
     ownerUser: User;
 
-    @ManyToMany(type => Skill)
-    @JoinTable({name: "SkillProject"})
-    skills: Skill[];
-
+    @OneToMany(() => SkillProject, skillProject => skillProject.project)
+    skillsProject: SkillProject[];
+   
     @ManyToMany(type => User)
     @JoinTable({name: "UserWorkingProject"})
     workers: User[];

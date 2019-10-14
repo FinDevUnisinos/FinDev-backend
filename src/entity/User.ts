@@ -5,8 +5,10 @@ import {
     BaseEntity,
     ManyToMany,
     JoinTable,
+    OneToMany,
 } from "typeorm";
 import { Skill } from "./Skill";
+import { SkillUser } from "./SkillUser";
 
 @Entity("User")
 export class User extends BaseEntity {
@@ -32,9 +34,8 @@ export class User extends BaseEntity {
     @Column({  type: "character varying" , length: 40 , nullable: false} )
     userType: string;
 
-    @ManyToMany(type => Skill)
-    @JoinTable({name: "SkillUser"})
-    skills: Skill[];
+    @OneToMany(() => SkillUser, skillUser => skillUser.user)
+    skillsUser: SkillUser[];
 
     NewUser(
         name:string, 
