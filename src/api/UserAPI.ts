@@ -47,7 +47,7 @@ userApp.post(route.getUserRoute()+'/oneByEmail',authApp, async (req, res) => {
 	})  
 })
   
-userApp.post(route.getUserRoute()+'/insert', async (req, res) => {
+userApp.post(route.getUserRoute()+'/signup', async (req, res) => {
 	const userController= new UserController
 	try {
 	//find an existing user
@@ -61,10 +61,10 @@ userApp.post(route.getUserRoute()+'/insert', async (req, res) => {
 			req.body.name,
 			req.body.email,
 			sessionController.hashPassword(req.body.password),
-			req.body.usertype
+			req.body.userType
 			)
 			userController.addUser(createdUser)
-			res.send("User successfully created")
+			res.send(sessionController.generateToken(createdUser.name, createdUser.email))
 		} 
 	})
 	} catch (error) {
