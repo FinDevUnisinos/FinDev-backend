@@ -1,7 +1,7 @@
 import {
-    Entity, 
+    Entity,
     Column,
-    PrimaryGeneratedColumn, 
+    PrimaryGeneratedColumn,
     BaseEntity,
     ManyToOne,
     JoinColumn,
@@ -15,39 +15,39 @@ import { SkillProject } from "./SkillProject";
 @Entity("Project")
 export class Project extends BaseEntity {
 
-    @PrimaryGeneratedColumn({ type: "bigint"})
+    @PrimaryGeneratedColumn({ type: "bigint" })
     id: number;
 
-    @Column({ type: "character varying" , length: 256, nullable: false})
+    @Column({ type: "character varying", length: 256, nullable: false })
     name: string;
-    
-    @Column({ type: "character varying" , length: 1024, nullable: true})
+
+    @Column({ type: "character varying", length: 1024, nullable: true })
     description: string;
 
-    @Column({ type: "bool", nullable: false})
+    @Column({ type: "bool", nullable: false })
     closed: boolean;
 
     @ManyToOne(() => User, u => u.id)
-    @JoinColumn({ name: "idOwnerUser"})
+    @JoinColumn({ name: "idOwnerUser" })
     ownerUser: User;
 
     @OneToMany(() => SkillProject, skillProject => skillProject.project)
     skillsProject: SkillProject[];
-   
+
     @ManyToMany(type => User)
-    @JoinTable({name: "UserWorkingProject"})
+    @JoinTable({ name: "UserWorkingProject" })
     workers: User[];
 
     @ManyToMany(type => User)
-    @JoinTable({name: "UserInterestProject"})
+    @JoinTable({ name: "UserInterestProject" })
     interests: User[];
 
     newProject(
-        name:string, 
-        description:string, 
+        name: string,
+        description: string,
         closed: boolean,
-        ownerUser:User
-        ):void {
+        ownerUser: User
+    ): void {
         this.name = name
         this.description = description
         this.closed = false

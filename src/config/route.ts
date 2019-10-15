@@ -1,31 +1,31 @@
 const apiUrl = '/api'
 
 export class Route {
-    getProjectRoute(){
+    getProjectRoute() {
         return apiUrl + '/project'
     }
 
-    getProjectWorkersRoute(){
+    getProjectWorkersRoute() {
         return this.getProjectRoute() + '/workers'
     }
 
-    getProjectInterestsRoute(){
+    getProjectInterestsRoute() {
         return this.getProjectRoute() + '/interests'
     }
 
-    getProjectSkillsRoute(){
+    getProjectSkillsRoute() {
         return this.getProjectRoute() + '/skills'
     }
 
-    getValidatorRoute(){
+    getValidatorRoute() {
         return apiUrl + '/validator'
     }
 
-    getUserRoute(){
+    getUserRoute() {
         return apiUrl + '/user'
     }
 
-    getUserSkillsRoute(){
+    getUserSkillsRoute() {
         return this.getUserRoute() + '/skills'
     }
 }

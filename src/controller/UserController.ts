@@ -1,24 +1,24 @@
-import {getConnection, createQueryBuilder} from "typeorm";
-import {User} from "../entity/User";
+import { getConnection, createQueryBuilder } from "typeorm";
+import { User } from "../entity/User";
 import { SkillController } from "./SkillController";
 import { SkillUser } from "../entity/SkillUser";
 import { Validator } from "../config/validator";
 
 export class UserController {
-    addUser(usr:User):void{
+    addUser(usr: User): void {
         getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(User)
-        .values(usr)
-        .execute();
+            .createQueryBuilder()
+            .insert()
+            .into(User)
+            .values(usr)
+            .execute();
     }
-    
-    getUsers():Promise<User[]>{
+
+    getUsers(): Promise<User[]> {
         return getConnection().manager.find(User);
     }
 
-    async addSkillOnUser(userId:number, skillId:number, level:number):Promise<void>{
+    async addSkillOnUser(userId: number, skillId: number, level: number): Promise<void> {
         let skillController = new SkillController
         let userSkill = new SkillUser
         let validator = new Validator
@@ -27,30 +27,30 @@ export class UserController {
         userSkill.skill = await skillController.getSkillById(skillId)
 
         getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(SkillUser)
-        .values(userSkill)
-        .execute();
+            .createQueryBuilder()
+            .insert()
+            .into(SkillUser)
+            .values(userSkill)
+            .execute();
     }
 
-    getUsersWithSkills(user:User):Promise<User[]>{
-        if(!user){
+    getUsersWithSkills(user: User): Promise<User[]> {
+        if (!user) {
             return createQueryBuilder(User)
-                .leftJoinAndSelect( "User.skillsUser","skillUser")
-                .leftJoinAndSelect( "skillUser.skill","skill")
-                .getMany(); 
-        } else{
+                .leftJoinAndSelect("User.skillsUser", "skillUser")
+                .leftJoinAndSelect("skillUser.skill", "skill")
+                .getMany();
+        } else {
             return createQueryBuilder(User)
-                .leftJoinAndSelect( "User.skillsUser","skillUser")
-                .leftJoinAndSelect( "skillUser.skill","skill")
-                .where({id: user.id})
-                .getMany();   
-        }      
+                .leftJoinAndSelect("User.skillsUser", "skillUser")
+                .leftJoinAndSelect("skillUser.skill", "skill")
+                .where({ id: user.id })
+                .getMany();
+        }
     }
-    
-    getUserById(idExt:number):Promise<User>{
-        const one =  getConnection()
+
+    getUserById(idExt: number): Promise<User> {
+        const one = getConnection()
             .getRepository(User)
             .createQueryBuilder("u")
             .where("u.id = :id", { id: idExt })
@@ -58,8 +58,8 @@ export class UserController {
         return one
     }
 
-    getUserByEmail(emailExt:string):Promise<User>{
-        const one =  getConnection()
+    getUserByEmail(emailExt: string): Promise<User> {
+        const one = getConnection()
             .getRepository(User)
             .createQueryBuilder("u")
             .where("u.email like :email", { email: emailExt })
@@ -67,14 +67,14 @@ export class UserController {
         return one
     }
 
-    veryfyPassword(emailExt:string, passwordExt:string):Promise<User>{
-        const one =  getConnection()
+    veryfyPassword(emailExt: string, passwordExt: string): Promise<User> {
+        const one = getConnection()
             .getRepository(User)
             .createQueryBuilder("u")
             .where("u.email = :email", { email: emailExt })
             .andWhere("u.password = :password", { password: passwordExt })
             .getOne();
         return one
-    }  
+    }
 
 }

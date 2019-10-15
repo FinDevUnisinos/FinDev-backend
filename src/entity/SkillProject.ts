@@ -1,5 +1,5 @@
 import {
-    Entity, 
+    Entity,
     Column,
     BaseEntity,
     ManyToOne
@@ -17,6 +17,6 @@ export class SkillProject extends BaseEntity {
     skill: Skill;
 
     // level of the skill is 1 to 3
-    @Column({ type: "bigint" , nullable: false})
+    @Column({ type: "bigint", nullable: false })
     level: number;
 }

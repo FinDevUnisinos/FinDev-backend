@@ -2,7 +2,7 @@ import "reflect-metadata"
 import { config } from './config/db'
 import { createConnection, getConnectionManager } from "typeorm";
 
-export async function asyncConnection() { 
+export async function asyncConnection() {
     try {
         return await createConnection({
             type: "postgres",
@@ -26,5 +26,4 @@ export async function asyncConnection() {
             return existentConn;
         }
     }
-    
 }
