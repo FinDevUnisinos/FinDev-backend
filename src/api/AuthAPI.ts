@@ -6,8 +6,10 @@ const sessionController = new SessionController
 
 authApp.use(function (req, res, next) {
     const token = req.headers['x-access-token']
+
     if (token) {
         const validToken = sessionController.validateToken(token.toString())
+
         if (validToken != -1) {
             return next('router')
         } else {
