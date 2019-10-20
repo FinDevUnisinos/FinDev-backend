@@ -101,11 +101,18 @@ projectApp.post(route.getProjectSkillsRoute() + '/insert', authApp, async (req, 
     })
 });
 
-projectApp.post(route.getProjectSkillsRoute() + '/all', authApp, async (req, res, next) => {
+projectApp.post(route.getProjectSkillsRoute() + '/all/company', authApp, async (req, res, next) => {
     const validToken = sessionController.validateToken(req.headers['x-access-token'].toString())
     asyncConnection().then(async () => {
         const user = await userController.getUserByEmail(validToken.body.email.toString())
         res.send(await projectController.getProjectsWithSkills(user))
+    })
+});
+
+projectApp.post(route.getProjectSkillsRoute() + '/all/employee', authApp, async (req, res, next) => {
+    const validToken = sessionController.validateToken(req.headers['x-access-token'].toString())
+    asyncConnection().then(async () => {
+        res.send(await projectController.getProjectsWithSkills(undefined))
     })
 });
 
