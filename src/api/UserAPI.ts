@@ -47,7 +47,7 @@ userApp.post(route.getUserRoute() + '/oneByEmail', authApp, async (req, res) => 
 		res.send(await userController.getUserByEmail(email))
 	})
 })
-
+  
 userApp.post(route.getUserRoute() + '/signup', async (req, res) => {
 	const userController = new UserController
 	try {
