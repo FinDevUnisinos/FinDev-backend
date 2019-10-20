@@ -2,7 +2,7 @@ import "reflect-metadata"
 import { config } from './config/db'
 import { createConnection, getConnectionManager } from "typeorm";
 
-export async function asyncConnection() { 
+export async function asyncConnection() {
     try {
         return await createConnection({
             type: "postgres",
@@ -15,7 +15,7 @@ export async function asyncConnection() {
             entities: [
                 __dirname + "/entity/*.ts"
             ],
-            synchronize: true, //to activate sync database when change a collumn or table... 
+            synchronize: false, //to activate sync database when change a collumn or table... 
             logging: false, //to activate log of selects, inserts, updates...
             dropSchema: false
         })
@@ -26,5 +26,4 @@ export async function asyncConnection() {
             return existentConn;
         }
     }
-    
 }
