@@ -102,11 +102,27 @@ projectApp.post(route.getProjectInterestsRoute() + '/insert', authApp, async (re
             const projectId = Number.parseInt(req.body.projectId)
             const userId = user.id
             
-            await projectController.addInterestOnProject(projectId, userId)
+            await projectController.addInterestOnProject(projectId, userId, req.body.positive)
             res.send("Interest successfully inserted on Project")
 
         } else {
             res.status(403).send("You cannot insert a interest on a project since you aren't an employee")
+        }
+    })
+});
+
+projectApp.post(route.getProjectInterestsRoute() + '/all', authApp, async (req, res, next) => {
+    
+    const validToken = sessionController.validateToken(req.headers['x-access-token'].toString())
+    
+    asyncConnection().then(async () => {
+    
+        const user = await userController.getUserByEmail(validToken.body.email.toString())
+    
+        if (user.userType === UserTypes.COMPANY) {
+            res.send(await projectController.getInterestsOfAllProjects(user))
+        } else {
+            res.status(403).send("You cannot get interest on your projects since you aren't a company")
         }
     })
 });

@@ -4,6 +4,8 @@ import { User } from "../entity/User";
 import { SkillProject } from "../entity/SkillProject";
 import { SkillController } from "./SkillController";
 import { Validator } from "../config/validator";
+import { UserInterestProject } from "../entity/UserInterestProject";
+import { UserController } from "./UserController";
 
 export class ProjectController {
     addProject(project: Project): void {
@@ -39,12 +41,21 @@ export class ProjectController {
             .add(userId);
     }
 
-    addInterestOnProject(projectId: number, userId: number): void {
+    async addInterestOnProject(projectId: number, userId: number, positive: boolean): Promise<void> {
+
+        const userController = new UserController
+        let userInterestProject = new UserInterestProject
+
+        userInterestProject.positive = positive
+        userInterestProject.project = await this.getProjectById(projectId)
+        userInterestProject.user = await userController.getUserById(userId)
+
         getConnection()
             .createQueryBuilder()
-            .relation(Project, "interests")
-            .of(projectId)
-            .add(userId);
+            .insert()
+            .into(UserInterestProject)
+            .values(userInterestProject)
+            .execute();
     }
 
     getProjects(): Promise<Project[]> {
@@ -75,12 +86,14 @@ export class ProjectController {
             .getMany();
     }
 
-    getInterestsOfProject(idExt: number): Promise<Project[]> {
-        return getConnection()
-            .getRepository(Project)
-            .createQueryBuilder("p")
-            .leftJoinAndSelect("p.interests", "user")
-            .where("p.id = :id", { id: idExt })
+    getInterestsOfAllProjects(user: User): Promise<Project[]> {
+        return createQueryBuilder(Project)
+            .innerJoinAndSelect("Project.interestsProject", "UserInterestProject")
+            .leftJoinAndSelect("UserInterestProject.user", "user")
+            .leftJoinAndSelect("user.skillsUser", "skillUser")
+            .leftJoinAndSelect("skillUser.skill", "skill")
+            .where({ ownerUser: user.id })
+            .andWhere("UserInterestProject.positive=true")
             .getMany();
     }
 

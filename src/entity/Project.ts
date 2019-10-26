@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import { User } from "./User";
 import { SkillProject } from "./SkillProject";
+import { UserInterestProject } from "./UserInterestProject";
 
 @Entity("Project")
 export class Project extends BaseEntity {
@@ -38,9 +39,8 @@ export class Project extends BaseEntity {
     @JoinTable({ name: "UserWorkingProject" })
     workers: User[];
 
-    @ManyToMany(type => User)
-    @JoinTable({ name: "UserInterestProject" })
-    interests: User[];
+    @OneToMany(() => UserInterestProject, userInterestProject => userInterestProject.project)
+    interestsProject: UserInterestProject[];
 
     newProject(
         name: string,
