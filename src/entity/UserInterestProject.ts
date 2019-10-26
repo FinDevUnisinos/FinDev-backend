@@ -16,7 +16,6 @@ export class UserInterestProject extends BaseEntity {
     @ManyToOne(() => User, project => project.interestsProjects, { primary: true })
     user: User;
 
-    // level of the skill is 1 to 3
     @Column({ type: "bool", nullable: false })
     positive: boolean;
 }
