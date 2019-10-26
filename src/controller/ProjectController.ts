@@ -88,12 +88,17 @@ export class ProjectController {
 
     getInterestsOfAllProjects(user: User): Promise<Project[]> {
         return createQueryBuilder(Project)
-            .innerJoinAndSelect("Project.interestsProject", "UserInterestProject")
-            .leftJoinAndSelect("UserInterestProject.user", "user")
-            .leftJoinAndSelect("user.skillsUser", "skillUser")
-            .leftJoinAndSelect("skillUser.skill", "skill")
+            .innerJoinAndSelect("Project.interestsProject", "uip")
+
+            .leftJoinAndSelect("Project.skillsProject", "sp")
+            .leftJoinAndSelect("sp.skill", "sps")
+
+            .leftJoinAndSelect("uip.user", "u")
+            .leftJoinAndSelect("u.skillsUser", "su")
+            .leftJoinAndSelect("su.skill", "sus")
+
             .where({ ownerUser: user.id })
-            .andWhere("UserInterestProject.positive=true")
+            .andWhere("uip.positive=true")
             .getMany();
     }
 
