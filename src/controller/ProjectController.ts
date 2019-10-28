@@ -62,19 +62,28 @@ export class ProjectController {
         return getConnection().manager.find(Project);
     }
 
-    getProjectsWithSkills(user: User): Promise<Project[]> {
-        if (!user) {
-            return createQueryBuilder(Project)
-                .leftJoinAndSelect("Project.skillsProject", "skillProject")
-                .leftJoinAndSelect("skillProject.skill", "skill")
-                .getMany();
-        } else {
-            return createQueryBuilder(Project)
-                .leftJoinAndSelect("Project.skillsProject", "skillProject")
-                .leftJoinAndSelect("skillProject.skill", "skill")
-                .where({ ownerUser: user.id })
-                .getMany();
-        }
+    getProjectsWithSkillsCompany(user: User): Promise<Project[]> {
+        return createQueryBuilder(Project)
+            .leftJoinAndSelect("Project.skillsProject", "skillProject")
+            .leftJoinAndSelect("skillProject.skill", "skill")
+            .where({ ownerUser: user.id })
+            .getMany();
+    }
+
+    getProjectsWithSkillsEmployee(user: User): Promise<Project[]> {
+        let interestedProjs = createQueryBuilder()
+            .select("\"p2\".\"id\"")
+            .from("Project", "p2")
+            .innerJoin("p2.interestsProject", "uip2")
+            .innerJoin("uip2.user", "u2")
+            .where("u2.id = :identifier");
+
+        return createQueryBuilder(Project)
+            .leftJoinAndSelect("Project.skillsProject", "skillProject")
+            .leftJoinAndSelect("skillProject.skill", "skill")
+            .where({ closed: false })
+            .andWhere("Project.id NOT IN (" + interestedProjs.getSql() + ")", { identifier: user.id })
+            .getMany();
     }
 
     getWorkersOfProject(idExt: number): Promise<Project[]> {
