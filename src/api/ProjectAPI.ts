@@ -20,24 +20,6 @@ const userController = new UserController
 const route = new Route
 
 //region requests to PROJECT
-projectApp.post(route.getProjectRoute() + '/allByOwner', authApp, async (req, res, next) => {
-    
-    const validToken = sessionController.validateToken(req.headers['x-access-token'].toString())
-    
-    asyncConnection().then(async () => {
-    
-        const user = await userController.getUserByEmail(validToken.body.email)
-        res.send(await projectController.getProjectsWithSkills(user))
-    
-    })
-});
-
-projectApp.post(route.getProjectRoute() + '/all', authApp, async (req, res, next) => {
-    asyncConnection().then(async () => {
-        res.send(await projectController.getProjectsWithSkills(undefined))
-    })
-});
-
 
 projectApp.post(route.getProjectRoute() + '/insert', authApp, async (req, res, next) => {
     
@@ -102,11 +84,27 @@ projectApp.post(route.getProjectInterestsRoute() + '/insert', authApp, async (re
             const projectId = Number.parseInt(req.body.projectId)
             const userId = user.id
             
-            await projectController.addInterestOnProject(projectId, userId)
+            await projectController.addInterestOnProject(projectId, userId, req.body.positive)
             res.send("Interest successfully inserted on Project")
 
         } else {
             res.status(403).send("You cannot insert a interest on a project since you aren't an employee")
+        }
+    })
+});
+
+projectApp.post(route.getProjectInterestsRoute() + '/all', authApp, async (req, res, next) => {
+    
+    const validToken = sessionController.validateToken(req.headers['x-access-token'].toString())
+    
+    asyncConnection().then(async () => {
+    
+        const user = await userController.getUserByEmail(validToken.body.email.toString())
+    
+        if (user.userType === UserTypes.COMPANY) {
+            res.send(await projectController.getInterestsOfAllProjects(user))
+        } else {
+            res.status(403).send("You cannot get interest on your projects since you aren't a company")
         }
     })
 });
@@ -142,14 +140,20 @@ projectApp.post(route.getProjectSkillsRoute() + '/all/company', authApp, async (
     asyncConnection().then(async () => {
         
         const user = await userController.getUserByEmail(validToken.body.email.toString())
-        res.send(await projectController.getProjectsWithSkills(user))
+        res.send(await projectController.getProjectsWithSkillsCompany(user))
         
     })
 });
 
 projectApp.post(route.getProjectSkillsRoute() + '/all/employee', authApp, async (req, res, next) => {
+    
+    const validToken = sessionController.validateToken(req.headers['x-access-token'].toString())
+    
     asyncConnection().then(async () => {
-        res.send(await projectController.getProjectsWithSkills(undefined))
+        
+        const user = await userController.getUserByEmail(validToken.body.email.toString())
+        res.send(await projectController.getProjectsWithSkillsEmployee(user))
+        
     })
 });
 

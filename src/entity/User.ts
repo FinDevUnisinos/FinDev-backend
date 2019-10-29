@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { Skill } from "./Skill";
 import { SkillUser } from "./SkillUser";
+import { UserInterestProject } from "./UserInterestProject";
 
 @Entity("User")
 export class User extends BaseEntity {
@@ -36,6 +37,9 @@ export class User extends BaseEntity {
 
     @OneToMany(() => SkillUser, skillUser => skillUser.user)
     skillsUser: SkillUser[];
+    
+    @OneToMany(() => UserInterestProject, userInterestProject => userInterestProject.user)
+    interestsProjects: UserInterestProject[];
 
     NewUser(
         name: string,

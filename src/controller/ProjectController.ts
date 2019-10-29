@@ -4,6 +4,8 @@ import { User } from "../entity/User";
 import { SkillProject } from "../entity/SkillProject";
 import { SkillController } from "./SkillController";
 import { Validator } from "../config/validator";
+import { UserInterestProject } from "../entity/UserInterestProject";
+import { UserController } from "./UserController";
 
 export class ProjectController {
     addProject(project: Project): void {
@@ -39,31 +41,49 @@ export class ProjectController {
             .add(userId);
     }
 
-    addInterestOnProject(projectId: number, userId: number): void {
+    async addInterestOnProject(projectId: number, userId: number, positive: boolean): Promise<void> {
+
+        const userController = new UserController
+        let userInterestProject = new UserInterestProject
+
+        userInterestProject.positive = positive
+        userInterestProject.project = await this.getProjectById(projectId)
+        userInterestProject.user = await userController.getUserById(userId)
+
         getConnection()
             .createQueryBuilder()
-            .relation(Project, "interests")
-            .of(projectId)
-            .add(userId);
+            .insert()
+            .into(UserInterestProject)
+            .values(userInterestProject)
+            .execute();
     }
 
     getProjects(): Promise<Project[]> {
         return getConnection().manager.find(Project);
     }
 
-    getProjectsWithSkills(user: User): Promise<Project[]> {
-        if (!user) {
-            return createQueryBuilder(Project)
-                .leftJoinAndSelect("Project.skillsProject", "skillProject")
-                .leftJoinAndSelect("skillProject.skill", "skill")
-                .getMany();
-        } else {
-            return createQueryBuilder(Project)
-                .leftJoinAndSelect("Project.skillsProject", "skillProject")
-                .leftJoinAndSelect("skillProject.skill", "skill")
-                .where({ ownerUser: user.id })
-                .getMany();
-        }
+    getProjectsWithSkillsCompany(user: User): Promise<Project[]> {
+        return createQueryBuilder(Project)
+            .leftJoinAndSelect("Project.skillsProject", "skillProject")
+            .leftJoinAndSelect("skillProject.skill", "skill")
+            .where({ ownerUser: user.id })
+            .getMany();
+    }
+
+    getProjectsWithSkillsEmployee(user: User): Promise<Project[]> {
+        let interestedProjs = createQueryBuilder()
+            .select("\"p2\".\"id\"")
+            .from("Project", "p2")
+            .innerJoin("p2.interestsProject", "uip2")
+            .innerJoin("uip2.user", "u2")
+            .where("u2.id = :identifier");
+
+        return createQueryBuilder(Project)
+            .leftJoinAndSelect("Project.skillsProject", "skillProject")
+            .leftJoinAndSelect("skillProject.skill", "skill")
+            .where({ closed: false })
+            .andWhere("Project.id NOT IN (" + interestedProjs.getSql() + ")", { identifier: user.id })
+            .getMany();
     }
 
     getWorkersOfProject(idExt: number): Promise<Project[]> {
@@ -75,12 +95,19 @@ export class ProjectController {
             .getMany();
     }
 
-    getInterestsOfProject(idExt: number): Promise<Project[]> {
-        return getConnection()
-            .getRepository(Project)
-            .createQueryBuilder("p")
-            .leftJoinAndSelect("p.interests", "user")
-            .where("p.id = :id", { id: idExt })
+    getInterestsOfAllProjects(user: User): Promise<Project[]> {
+        return createQueryBuilder(Project)
+            .innerJoinAndSelect("Project.interestsProject", "uip")
+
+            .leftJoinAndSelect("Project.skillsProject", "sp")
+            .leftJoinAndSelect("sp.skill", "sps")
+
+            .leftJoinAndSelect("uip.user", "u")
+            .leftJoinAndSelect("u.skillsUser", "su")
+            .leftJoinAndSelect("su.skill", "sus")
+
+            .where({ ownerUser: user.id })
+            .andWhere("uip.positive=true")
             .getMany();
     }
 
