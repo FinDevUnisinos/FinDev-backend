@@ -45,13 +45,13 @@ userApp.get(route.getUserRoute() + '/all', authApp, async (req, res) => {
 	})
 });
 
-userApp.post(route.getUserRoute() + '/getUserType', authApp, async (req, res) => {
+userApp.post(route.getUserRoute() + '/getUser', authApp, async (req, res) => {
 	
 	const validToken = sessionController.validateToken(req.headers['x-access-token'].toString())
 	
 	asyncConnection().then(async () => {
 		const user = await userController.getUserByEmail(validToken.body.email.toString())
-		res.send(user.userType)
+		res.send(user)
 	})
 })
   
