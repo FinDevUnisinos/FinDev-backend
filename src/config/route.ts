@@ -28,4 +28,8 @@ export class Route {
     getUserSkillsRoute() {
         return this.getUserRoute() + '/skills'
     }
+
+    getSkillRoute() {
+        return apiUrl + '/skill'
+    }
 }
