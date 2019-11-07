@@ -22,4 +22,9 @@ export class Skill extends BaseEntity {
 
     @OneToMany(() => SkillUser, skillUser => skillUser.skill)
     skillUser: SkillUser[];
+
+    newSkill(description: string)
+    {
+        this.description = description
+    }
 }
