@@ -45,8 +45,7 @@ export class Project extends BaseEntity {
     newProject(
         name: string,
         description: string,
-        closed: boolean,
-        ownerUser: User
+        ownerUser: User,
     ): void {
         this.name = name
         this.description = description

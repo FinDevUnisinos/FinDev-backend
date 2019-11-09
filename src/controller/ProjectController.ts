@@ -1,4 +1,4 @@
-import { getConnection, createQueryBuilder } from "typeorm";
+import { getConnection, createQueryBuilder, UpdateResult } from "typeorm";
 import { Project } from "../entity/Project";
 import { User } from "../entity/User";
 import { SkillProject } from "../entity/SkillProject";
@@ -123,6 +123,13 @@ export class ProjectController {
         return getConnection()
             .getRepository(Project)
             .find({ ownerUser: user })
+    }
+
+    updateProjectToClosed(user: User, idExt: number): Promise<UpdateResult> {
+        return getConnection().getRepository(Project).update(
+            { id: idExt, ownerUser: user },
+            { closed: true },
+        )
     }
 
 }
