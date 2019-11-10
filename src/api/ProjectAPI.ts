@@ -31,11 +31,15 @@ projectApp.post(route.getProjectRoute() + '/insert', authApp, async (req, res, n
             project.newProject(
                 req.body.name,
                 req.body.description,
+                req.body.closed,
                 user,
             )
-
-            await projectController.addProject(project)
-            res.send("Project successfully created")
+            
+            const result = await projectController.addProject(project)
+            res.send({
+                status: "Project successfully created",
+                result: result.identifiers[0]
+            })
 
         } else {
             res.status(403).send("You cannot create a project since you aren't a company")
@@ -46,7 +50,7 @@ projectApp.post(route.getProjectRoute() + '/insert', authApp, async (req, res, n
 
 
 projectApp.post(route.getProjectRoute() + '/close', authApp, async (req, res, next) => {
-   
+
     asyncConnection().then(async () => {
 
         const user = await sessionController.getUserLoggedIn(req)
@@ -54,8 +58,8 @@ projectApp.post(route.getProjectRoute() + '/close', authApp, async (req, res, ne
         if (user.userType === UserTypes.COMPANY) {
 
             const result = (await projectController.updateProjectToClosed(user, req.body.id))
-            
-            if(result.affected>0){
+
+            if (result.affected > 0) {
                 res.send("Project successfully closed")
             } else {
                 res.status(403).send("You cannot close this project because this is not yours.")

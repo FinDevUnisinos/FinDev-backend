@@ -1,4 +1,4 @@
-import { getConnection, createQueryBuilder, UpdateResult } from "typeorm";
+import { getConnection, createQueryBuilder, UpdateResult, InsertResult } from "typeorm";
 import { Project } from "../entity/Project";
 import { User } from "../entity/User";
 import { SkillProject } from "../entity/SkillProject";
@@ -8,8 +8,8 @@ import { UserInterestProject } from "../entity/UserInterestProject";
 import { UserController } from "./UserController";
 
 export class ProjectController {
-    addProject(project: Project): void {
-        getConnection()
+    addProject(project: Project): Promise<InsertResult> {
+        return getConnection()
             .createQueryBuilder()
             .insert()
             .into(Project)
