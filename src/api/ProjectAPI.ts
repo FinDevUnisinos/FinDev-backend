@@ -34,7 +34,7 @@ projectApp.post(route.getProjectRoute() + '/insert', authApp, async (req, res, n
                 req.body.closed,
                 user,
             )
-            
+
             const result = await projectController.addProject(project)
             res.send({
                 status: "Project successfully created",
@@ -143,6 +143,28 @@ projectApp.post(route.getProjectSkillsRoute() + '/insert', authApp, async (req, 
 
         } else {
             res.status(403).send("You cannot insert a skill on a project since you aren't a company")
+        }
+
+    })
+});
+
+
+projectApp.post(route.getProjectSkillsRoute() + '/delete', authApp, async (req, res, next) => {
+
+    asyncConnection().then(async () => {
+
+        const user = await sessionController.getUserLoggedIn(req)
+
+        if (user.userType === UserTypes.COMPANY) {
+
+            const projectId = Number.parseInt(req.body.projectId)
+            const skillId = Number.parseInt(req.body.skillId)
+
+            await projectController.deleteSkillFromProject(projectId, skillId)
+            res.send("Skill successfully deleted from Project")
+
+        } else {
+            res.status(403).send("You cannot delete a skill from a project since you aren't a company")
         }
 
     })

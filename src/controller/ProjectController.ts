@@ -1,4 +1,4 @@
-import { getConnection, createQueryBuilder, UpdateResult, InsertResult } from "typeorm";
+import { getConnection, createQueryBuilder, UpdateResult, InsertResult, DeleteResult } from "typeorm";
 import { Project } from "../entity/Project";
 import { User } from "../entity/User";
 import { SkillProject } from "../entity/SkillProject";
@@ -17,7 +17,7 @@ export class ProjectController {
             .execute();
     }
 
-    async addSkillOnProject(projectId: number, skillId: number, level: number): Promise<void> {
+    async addSkillOnProject(projectId: number, skillId: number, level: number): Promise<InsertResult> {
         let skillController = new SkillController
         let projSkill = new SkillProject
         let validator = new Validator
@@ -25,7 +25,7 @@ export class ProjectController {
         projSkill.project = await this.getProjectById(projectId)
         projSkill.skill = await skillController.getSkillById(skillId)
 
-        getConnection()
+        return getConnection()
             .createQueryBuilder()
             .insert()
             .into(SkillProject)
@@ -33,8 +33,18 @@ export class ProjectController {
             .execute();
     }
 
-    addWorkerOnProject(projectId: number, userId: number): void {
-        getConnection()
+    deleteSkillFromProject(projectId: number, skillId: number): Promise<DeleteResult>  {
+        return getConnection()
+            .createQueryBuilder()
+            .delete()
+            .from(SkillProject)
+            .where("\"projectId\" = :projectId", { projectId: projectId })
+            .andWhere("\"skillId\" = :skillId", { skillId: skillId })
+            .execute();
+    }
+
+    addWorkerOnProject(projectId: number, userId: number): Promise<void>  {
+        return getConnection()
             .createQueryBuilder()
             .relation(Project, "workers")
             .of(projectId)
