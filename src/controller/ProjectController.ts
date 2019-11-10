@@ -8,12 +8,12 @@ import { UserInterestProject } from "../entity/UserInterestProject";
 import { UserController } from "./UserController";
 
 export class ProjectController {
-
+    
     async validateProjectIsMine(projectId: number, user: User): Promise<boolean> {
         const proj = await this.getProjectById(projectId)
         return proj == undefined ? false : proj.ownerUser.id == user.id
     }
-    
+
     addProject(project: Project): Promise<InsertResult> {
         return getConnection()
             .createQueryBuilder()
@@ -139,11 +139,16 @@ export class ProjectController {
             .find({ ownerUser: user })
     }
 
-    updateProjectToClosed(user: User, idExt: number): Promise<UpdateResult> {
+    updateProjectToClosed(idExt: number): Promise<UpdateResult> {
         return getConnection().getRepository(Project).update(
-            { id: idExt, ownerUser: user },
+            { id: idExt},
             { closed: true },
         )
     }
+
+    updateProject(project: Project) {
+        return getConnection().getRepository(Project).save(project)
+    }
+
 
 }

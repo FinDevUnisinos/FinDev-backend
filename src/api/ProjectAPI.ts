@@ -48,6 +48,40 @@ projectApp.post(route.getProjectRoute() + '/insert', authApp, async (req, res, n
     })
 });
 
+projectApp.post(route.getProjectRoute() + '/update', authApp, async (req, res, next) => {
+
+    asyncConnection().then(async () => {
+
+        const user = await sessionController.getUserLoggedIn(req)
+
+        if (user.userType === UserTypes.COMPANY) {
+
+            const projectId = Number.parseInt(req.body.id)
+            const projectIsMine = await projectController.validateProjectIsMine(projectId, user)
+            
+            if (projectIsMine == true) {
+
+                const project = await projectController.getProjectById(projectId)
+                project.name = req.body.name
+                project.description = req.body.description
+                project.closed = req.body.closed == undefined ? project.closed : req.body.closed
+
+                const result = await projectController.updateProject(project)
+                res.send({
+                    status: "Project successfully created",
+                    result: result
+                })
+
+            } else {
+                res.status(403).send("This Project not yours!")
+            }
+
+        } else {
+            res.status(403).send("You cannot update a project since you aren't a company")
+        }
+
+    })
+});
 
 projectApp.post(route.getProjectRoute() + '/close', authApp, async (req, res, next) => {
 
@@ -56,11 +90,18 @@ projectApp.post(route.getProjectRoute() + '/close', authApp, async (req, res, ne
         const user = await sessionController.getUserLoggedIn(req)
 
         if (user.userType === UserTypes.COMPANY) {
+            
+            const projectId = req.body.id
+            const projectIsMine = await projectController.validateProjectIsMine(projectId, user)
+            
+            if (projectIsMine == true) {
+                
+                const result = (await projectController.updateProjectToClosed(projectId))
+                if (result.affected > 0)
+                    res.send("Project successfully closed")
+                else
+                    res.send("Project unsuccessfully closed")
 
-            const result = (await projectController.updateProjectToClosed(user, req.body.id))
-
-            if (result.affected > 0) {
-                res.send("Project successfully closed")
             } else {
                 res.status(403).send("You cannot close this project because this is not yours.")
             }
@@ -138,20 +179,18 @@ projectApp.post(route.getProjectSkillsRoute() + '/insert', authApp, async (req, 
             const skillId = Number.parseInt(req.body.skillId)
             const level = Number.parseInt(req.body.level)
 
-            const projectIsMine = await projectController.validateProjectIsMine(projectId,user)
-            console.log(projectIsMine)
-            if(projectIsMine == true){
+            const projectIsMine = await projectController.validateProjectIsMine(projectId, user)
+
+            if (projectIsMine == true) {
 
                 await projectController.addSkillOnProject(projectId, skillId, level)
                 res.send("Skill successfully inserted on Project")
-                
-            } else{
+
+            } else {
 
                 res.status(403).send("This Project not yours!")
 
             }
-
-            
 
         } else {
             res.status(403).send("You cannot insert a skill on a project since you aren't a company")
@@ -159,7 +198,6 @@ projectApp.post(route.getProjectSkillsRoute() + '/insert', authApp, async (req, 
 
     })
 });
-
 
 projectApp.post(route.getProjectSkillsRoute() + '/delete', authApp, async (req, res, next) => {
 
@@ -172,14 +210,14 @@ projectApp.post(route.getProjectSkillsRoute() + '/delete', authApp, async (req, 
             const projectId = Number.parseInt(req.body.projectId)
             const skillId = Number.parseInt(req.body.skillId)
 
-            const projectIsMine = await projectController.validateProjectIsMine(projectId,user)
-            
-            if(projectIsMine == true){
+            const projectIsMine = await projectController.validateProjectIsMine(projectId, user)
+
+            if (projectIsMine == true) {
 
                 await projectController.deleteSkillFromProject(projectId, skillId)
                 res.send("Skill successfully deleted from Project")
 
-            } else{
+            } else {
                 res.status(403).send("This Project not yours!")
             }
 
