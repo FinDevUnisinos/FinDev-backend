@@ -8,6 +8,12 @@ import { UserInterestProject } from "../entity/UserInterestProject";
 import { UserController } from "./UserController";
 
 export class ProjectController {
+
+    async validateProjectIsMine(projectId: number, user: User): Promise<boolean> {
+        const proj = await this.getProjectById(projectId)
+        return proj == undefined ? false : proj.ownerUser.id == user.id
+    }
+    
     addProject(project: Project): Promise<InsertResult> {
         return getConnection()
             .createQueryBuilder()
@@ -17,7 +23,7 @@ export class ProjectController {
             .execute();
     }
 
-    async addSkillOnProject(projectId: number, skillId: number, level: number): Promise<InsertResult> {
+    async addSkillOnProject(projectId: number, skillId: number, level: number): Promise<SkillProject> {
         let skillController = new SkillController
         let projSkill = new SkillProject
         let validator = new Validator
@@ -26,14 +32,11 @@ export class ProjectController {
         projSkill.skill = await skillController.getSkillById(skillId)
 
         return getConnection()
-            .createQueryBuilder()
-            .insert()
-            .into(SkillProject)
-            .values(projSkill)
-            .execute();
+            .getRepository(SkillProject)
+            .save(projSkill);
     }
 
-    deleteSkillFromProject(projectId: number, skillId: number): Promise<DeleteResult>  {
+    deleteSkillFromProject(projectId: number, skillId: number): Promise<DeleteResult> {
         return getConnection()
             .createQueryBuilder()
             .delete()
@@ -43,7 +46,7 @@ export class ProjectController {
             .execute();
     }
 
-    addWorkerOnProject(projectId: number, userId: number): Promise<void>  {
+    addWorkerOnProject(projectId: number, userId: number): Promise<void> {
         return getConnection()
             .createQueryBuilder()
             .relation(Project, "workers")
@@ -125,6 +128,7 @@ export class ProjectController {
         return getConnection()
             .getRepository(Project)
             .createQueryBuilder("p")
+            .leftJoinAndSelect("p.ownerUser", "sp")
             .where("p.id = :id", { id: idExt })
             .getOne();
     }

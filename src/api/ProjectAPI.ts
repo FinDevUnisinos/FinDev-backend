@@ -138,8 +138,20 @@ projectApp.post(route.getProjectSkillsRoute() + '/insert', authApp, async (req, 
             const skillId = Number.parseInt(req.body.skillId)
             const level = Number.parseInt(req.body.level)
 
-            await projectController.addSkillOnProject(projectId, skillId, level)
-            res.send("Skill successfully inserted on Project")
+            const projectIsMine = await projectController.validateProjectIsMine(projectId,user)
+            console.log(projectIsMine)
+            if(projectIsMine == true){
+
+                await projectController.addSkillOnProject(projectId, skillId, level)
+                res.send("Skill successfully inserted on Project")
+                
+            } else{
+
+                res.status(403).send("This Project not yours!")
+
+            }
+
+            
 
         } else {
             res.status(403).send("You cannot insert a skill on a project since you aren't a company")
@@ -160,8 +172,16 @@ projectApp.post(route.getProjectSkillsRoute() + '/delete', authApp, async (req, 
             const projectId = Number.parseInt(req.body.projectId)
             const skillId = Number.parseInt(req.body.skillId)
 
-            await projectController.deleteSkillFromProject(projectId, skillId)
-            res.send("Skill successfully deleted from Project")
+            const projectIsMine = await projectController.validateProjectIsMine(projectId,user)
+            
+            if(projectIsMine == true){
+
+                await projectController.deleteSkillFromProject(projectId, skillId)
+                res.send("Skill successfully deleted from Project")
+
+            } else{
+                res.status(403).send("This Project not yours!")
+            }
 
         } else {
             res.status(403).send("You cannot delete a skill from a project since you aren't a company")
