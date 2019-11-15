@@ -1,4 +1,4 @@
-import { getConnection, createQueryBuilder } from "typeorm";
+import { getConnection, createQueryBuilder, UpdateResult, InsertResult, DeleteResult } from "typeorm";
 import { Project } from "../entity/Project";
 import { User } from "../entity/User";
 import { SkillProject } from "../entity/SkillProject";
@@ -8,8 +8,14 @@ import { UserInterestProject } from "../entity/UserInterestProject";
 import { UserController } from "./UserController";
 
 export class ProjectController {
-    addProject(project: Project): void {
-        getConnection()
+    
+    async validateProjectIsMine(projectId: number, user: User): Promise<boolean> {
+        const proj = await this.getProjectById(projectId)
+        return proj == undefined ? false : proj.ownerUser.id == user.id
+    }
+
+    addProject(project: Project): Promise<InsertResult> {
+        return getConnection()
             .createQueryBuilder()
             .insert()
             .into(Project)
@@ -17,7 +23,7 @@ export class ProjectController {
             .execute();
     }
 
-    async addSkillOnProject(projectId: number, skillId: number, level: number): Promise<void> {
+    async addSkillOnProject(projectId: number, skillId: number, level: number): Promise<SkillProject> {
         let skillController = new SkillController
         let projSkill = new SkillProject
         let validator = new Validator
@@ -25,16 +31,23 @@ export class ProjectController {
         projSkill.project = await this.getProjectById(projectId)
         projSkill.skill = await skillController.getSkillById(skillId)
 
-        getConnection()
+        return getConnection()
+            .getRepository(SkillProject)
+            .save(projSkill);
+    }
+
+    deleteSkillFromProject(projectId: number, skillId: number): Promise<DeleteResult> {
+        return getConnection()
             .createQueryBuilder()
-            .insert()
-            .into(SkillProject)
-            .values(projSkill)
+            .delete()
+            .from(SkillProject)
+            .where("\"projectId\" = :projectId", { projectId: projectId })
+            .andWhere("\"skillId\" = :skillId", { skillId: skillId })
             .execute();
     }
 
-    addWorkerOnProject(projectId: number, userId: number): void {
-        getConnection()
+    addWorkerOnProject(projectId: number, userId: number): Promise<void> {
+        return getConnection()
             .createQueryBuilder()
             .relation(Project, "workers")
             .of(projectId)
@@ -115,6 +128,7 @@ export class ProjectController {
         return getConnection()
             .getRepository(Project)
             .createQueryBuilder("p")
+            .leftJoinAndSelect("p.ownerUser", "sp")
             .where("p.id = :id", { id: idExt })
             .getOne();
     }
@@ -124,5 +138,17 @@ export class ProjectController {
             .getRepository(Project)
             .find({ ownerUser: user })
     }
+
+    updateProjectToClosed(idExt: number): Promise<UpdateResult> {
+        return getConnection().getRepository(Project).update(
+            { id: idExt},
+            { closed: true },
+        )
+    }
+
+    updateProject(project: Project) {
+        return getConnection().getRepository(Project).save(project)
+    }
+
 
 }

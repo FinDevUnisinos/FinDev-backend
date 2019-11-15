@@ -1,7 +1,15 @@
 import { njwtSecret } from "../config/jwt";
+import { User } from "../entity/User";
+import { UserController } from "./UserController";
 let nJwt = require('njwt');
 
 export class SessionController {
+    
+    async getUserLoggedIn(req: any): Promise<User> {
+        const userController = new UserController
+        const validToken = this.validateToken(req.headers['x-access-token'].toString())
+        return await userController.getUserByEmail(validToken.body.email.toString())
+    }
 
     generateToken(name: string, email: string): any {
         var claims = {
