@@ -36,10 +36,24 @@ projectApp.post(route.getProjectRoute() + '/insert', authApp, async (req, res, n
             )
 
             const result = await projectController.addProject(project)
+
+            const projectId = Number.parseInt(result.identifiers[0].id)
+
+            const listSkills = req.body.listSkills
+            if(listSkills!=undefined){
+                listSkills.forEach(async skill => {
+                    const skillId = skill.skillId
+                    const level = skill.level
+
+                    await projectController.addSkillOnProject(projectId, skillId, level)
+                });
+            }
+            
             res.send({
                 status: "Project successfully created",
                 result: result.identifiers[0]
             })
+
 
         } else {
             res.status(403).send("You cannot create a project since you aren't a company")
