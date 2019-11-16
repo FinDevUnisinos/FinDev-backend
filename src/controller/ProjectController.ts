@@ -80,6 +80,7 @@ export class ProjectController {
             .leftJoinAndSelect("Project.skillsProject", "skillProject")
             .leftJoinAndSelect("skillProject.skill", "skill")
             .where({ ownerUser: user.id })
+            .andWhere("Project.closed=false")
             .getMany();
     }
 
@@ -121,6 +122,7 @@ export class ProjectController {
 
             .where({ ownerUser: user.id })
             .andWhere("uip.positive=true")
+            .andWhere("Project.closed=false")
             .getMany();
     }
 
