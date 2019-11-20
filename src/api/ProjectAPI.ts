@@ -40,15 +40,17 @@ projectApp.post(route.getProjectRoute() + '/insert', authApp, async (req, res, n
             const projectId = Number.parseInt(result.identifiers[0].id)
 
             const listSkills = req.body.listSkills
-            if(listSkills!=undefined){
+            if (listSkills != undefined) {
                 listSkills.forEach(async skill => {
-                    const skillId = skill.skillId
-                    const level = skill.level
+                    if (skill != null) {
+                        const skillId = skill.skillId
+                        const level = skill.level
 
-                    await projectController.addSkillOnProject(projectId, skillId, level)
+                        await projectController.addSkillOnProject(projectId, skillId, level)
+                    }
                 });
             }
-            
+
             res.send({
                 status: "Project successfully created",
                 result: result.identifiers[0]
@@ -72,7 +74,7 @@ projectApp.post(route.getProjectRoute() + '/update', authApp, async (req, res, n
 
             const projectId = Number.parseInt(req.body.id)
             const projectIsMine = await projectController.validateProjectIsMine(projectId, user)
-            
+
             if (projectIsMine == true) {
 
                 const project = await projectController.getProjectById(projectId)
@@ -104,12 +106,12 @@ projectApp.post(route.getProjectRoute() + '/close', authApp, async (req, res, ne
         const user = await sessionController.getUserLoggedIn(req)
 
         if (user.userType === UserTypes.COMPANY) {
-            
+
             const projectId = req.body.id
             const projectIsMine = await projectController.validateProjectIsMine(projectId, user)
-            
+
             if (projectIsMine == true) {
-                
+
                 const result = (await projectController.updateProjectToClosed(projectId))
                 if (result.affected > 0)
                     res.send("Project successfully closed")
