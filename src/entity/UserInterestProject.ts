@@ -17,5 +17,8 @@ export class UserInterestProject extends BaseEntity {
     user: User;
 
     @Column({ type: "bool", nullable: false })
-    positive: boolean;
+    hasFreelancerInterest: boolean;
+
+    @Column({ type: "bool", nullable: true })
+    hasCompanyInterest: boolean;
 }
