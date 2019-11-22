@@ -169,6 +169,34 @@ projectApp.post(route.getProjectInterestsRoute() + '/insert', authApp, async (re
     })
 });
 
+projectApp.post(route.getProjectInterestsRoute() + '/update', authApp, async (req, res, next) => {
+
+    asyncConnection().then(async () => {
+
+        const user = await sessionController.getUserLoggedIn(req)
+
+        if (user.userType === UserTypes.COMPANY) {
+
+            const projectId = req.body.projectId
+            const projectIsMine = await projectController.validateProjectIsMine(projectId, user)
+
+            if (projectIsMine == true) {
+                
+                const userId = req.body.userId
+                projectController.addInterestOnFrelancer(projectId, userId, req.body.hasCompanyInterest)
+                res.send("Added Interest On Frelancer!")
+            } else {
+                res.status(403).send("This project is not yours.")
+            }
+
+        } else {
+            res.status(403).send("You cannot update this project since you aren't a company")
+        }
+
+    })
+});
+
+
 projectApp.post(route.getProjectInterestsRoute() + '/all', authApp, async (req, res, next) => {
 
     asyncConnection().then(async () => {

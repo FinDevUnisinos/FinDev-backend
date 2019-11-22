@@ -59,7 +59,7 @@ export class ProjectController {
         const userController = new UserController
         let userInterestProject = new UserInterestProject
 
-        userInterestProject.positive = positive
+        userInterestProject.hasFreelancerInterest = positive
         userInterestProject.project = await this.getProjectById(projectId)
         userInterestProject.user = await userController.getUserById(userId)
 
@@ -69,6 +69,16 @@ export class ProjectController {
             .into(UserInterestProject)
             .values(userInterestProject)
             .execute();
+    }
+
+    addInterestOnFrelancer(projectId: number, userId: number, hasCompanyInterest: boolean): void {
+        getConnection()
+        .createQueryBuilder()
+        .update(UserInterestProject)
+        .set({hasCompanyInterest: hasCompanyInterest})
+        .where("\"UserInterestProject\".\"projectId\" = :projectId", { projectId: projectId})
+        .andWhere("\"UserInterestProject\".\"userId\" = :userId", { userId: userId })
+        .execute();
     }
 
     getProjects(): Promise<Project[]> {
@@ -121,8 +131,9 @@ export class ProjectController {
             .leftJoinAndSelect("su.skill", "sus")
 
             .where({ ownerUser: user.id })
-            .andWhere("uip.positive=true")
+            .andWhere("uip.hasFreelancerInterest=true")
             .andWhere("Project.closed=false")
+            .andWhere("(uip.hasCompanyInterest=true OR uip.hasCompanyInterest is NULL)")
             .getMany();
     }
 
