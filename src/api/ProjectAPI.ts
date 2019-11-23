@@ -41,12 +41,12 @@ projectApp.post(route.getProjectRoute() + '/insert', authApp, async (req, res, n
 
             const listSkills = req.body.listSkills
             if (listSkills != undefined) {
-                listSkills.forEach(async skill => {
+                await listSkills.forEach(skill => {
                     if (skill != null) {
                         const skillId = skill.skillId
                         const level = skill.level
 
-                        await projectController.addSkillOnProject(projectId, skillId, level)
+                        projectController.addSkillOnProject(projectId, skillId, level)
                     }
                 });
             }
