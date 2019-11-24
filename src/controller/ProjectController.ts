@@ -134,6 +134,7 @@ export class ProjectController {
             .andWhere("uip.hasFreelancerInterest=true")
             .andWhere("Project.closed=false")
             .andWhere("(uip.hasCompanyInterest=true OR uip.hasCompanyInterest is NULL)")
+            .orderBy("p.name","ASC")
             .orderBy("u.name","ASC")
             .getMany();
     }
