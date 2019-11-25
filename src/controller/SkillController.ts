@@ -1,14 +1,16 @@
-import { getConnection } from "typeorm";
+import { getConnection, InsertResult } from "typeorm";
 import { Skill } from "../entity/Skill";
 
 export class SkillController {
-    addSkill(skill: Skill): void {
-        getConnection()
-            .createQueryBuilder()
-            .insert()
-            .into(Skill)
-            .values(skill)
-            .execute();
+    async addSkill(skill: Skill): Promise<InsertResult> {
+        return (
+            await getConnection()
+                .createQueryBuilder()
+                .insert()
+                .into(Skill)
+                .values(skill)
+                .execute()
+        )
     }
 
     getSkills(): Promise<Skill[]> {

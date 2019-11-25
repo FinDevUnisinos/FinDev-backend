@@ -25,12 +25,14 @@ skillApp.post(route.getSkillRoute() + '/insert', authApp, async (req, res, next)
             req.body.description,
         )
 
-        await skillControler.addSkill(skill)
-        res.send("Skill successfully created")
-
+        const result = await skillControler.addSkill(skill)
+        res.send({
+            id: result.identifiers[0],
+            result: "Skill successfully created"
+        })
     })
-
-});
+    
+})
 
 skillApp.post(route.getSkillRoute() + '/all', authApp, async (req, res, next) => {
 
