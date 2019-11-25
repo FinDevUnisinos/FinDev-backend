@@ -42,7 +42,7 @@ export class UserController {
         userSkill.user = await this.getUserById(userId)
         userSkill.skill = await skillController.getSkillById(skillId)
 
-        getConnection()
+        await getConnection()
             .getRepository(SkillUser)
             .save(userSkill);
     }
