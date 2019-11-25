@@ -31,7 +31,7 @@ export class ProjectController {
         projSkill.project = await this.getProjectById(projectId)
         projSkill.skill = await skillController.getSkillById(skillId)
 
-        return getConnection()
+        return await getConnection()
             .getRepository(SkillProject)
             .save(projSkill);
     }
@@ -63,7 +63,7 @@ export class ProjectController {
         userInterestProject.project = await this.getProjectById(projectId)
         userInterestProject.user = await userController.getUserById(userId)
 
-        getConnection()
+        await getConnection()
             .createQueryBuilder()
             .insert()
             .into(UserInterestProject)
