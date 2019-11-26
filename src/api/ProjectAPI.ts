@@ -41,14 +41,18 @@ projectApp.post(route.getProjectRoute() + '/insert', authApp, async (req, res, n
 
             const listSkills = req.body.listSkills
             if (listSkills != undefined) {
-                await listSkills.forEach(skill => {
-                    if (skill != null) {
-                        const skillId = skill.skillId
-                        const level = skill.level
+                try {
+                    const promises = listSkills.map(async (skill: any) => {
+                        let skillId = skill.skillId
+                        let level = skill.level
 
-                        projectController.addSkillOnProject(projectId, skillId, level)
-                    }
-                });
+                        await projectController.addSkillOnProject(projectId, skillId, level)
+                    })
+
+                    await Promise.all(promises);
+                } catch (error) {
+
+                }
             }
 
             res.send({
@@ -181,7 +185,7 @@ projectApp.post(route.getProjectInterestsRoute() + '/update', authApp, async (re
             const projectIsMine = await projectController.validateProjectIsMine(projectId, user)
 
             if (projectIsMine == true) {
-                
+
                 const userId = req.body.userId
                 projectController.addInterestOnFrelancer(projectId, userId, req.body.hasCompanyInterest)
                 res.send("Added Interest On Frelancer!")
