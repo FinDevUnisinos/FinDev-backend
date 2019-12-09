@@ -165,5 +165,12 @@ export class ProjectController {
         return getConnection().getRepository(Project).save(project)
     }
 
+    getProjectsByUserInterest(user: User): Promise<UserInterestProject[]> {
+        return getConnection()
+            .getRepository(	UserInterestProject)
+            .find({ user: user })
+    }
+
+
 
 }
