@@ -148,3 +148,15 @@ userApp.post(route.getUserSkillsRoute() + '/all', authApp, async (req, res, next
 
 	})
 });
+
+userApp.post(route.getUserProjectsRoute() + '/liked', authApp, async (req, res, next) => {
+
+	const validToken = sessionController.validateToken(req.headers['x-access-token'].toString())
+
+	asyncConnection().then(async () => {
+
+		const user = await userController.getUserByEmail(validToken.body.email.toString())
+		res.send(await userController.getUsersLikedProjects(user))
+
+	})
+});

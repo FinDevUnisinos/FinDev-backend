@@ -72,6 +72,22 @@ export class UserController {
         }
     }
 
+    
+    getUsersLikedProjects(user: User): Promise<User[]> {
+        if (!user) {
+            return createQueryBuilder(User)
+                .leftJoinAndSelect("User.interestsProjects", "interestsProjects")
+                .leftJoinAndSelect("interestsProjects.project", "project")
+                .getMany();
+        } else {
+            return createQueryBuilder(User)
+            .leftJoinAndSelect("User.interestsProjects", "interestsProjects")
+            .leftJoinAndSelect("interestsProjects.project", "project")
+                .where({ id: user.id })
+                .getMany();
+        }
+    }
+
     getUserById(idExt: number): Promise<User> {
         const one = getConnection()
             .getRepository(User)
