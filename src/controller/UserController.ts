@@ -83,6 +83,7 @@ export class UserController {
             .leftJoinAndSelect("User.interestsProjects", "interestsProjects")
             .leftJoinAndSelect("interestsProjects.project", "project")
                 .where({ id: user.id })
+                .andWhere("interestsProjects.hasFreelancerInterest = :hasFreelancerInterest",{ hasFreelancerInterest: true })
                 .getMany();
         }
     }
