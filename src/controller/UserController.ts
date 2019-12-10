@@ -71,7 +71,6 @@ export class UserController {
                 .getMany();
         }
     }
-
     
     getUsersLikedProjects(user: User): Promise<User[]> {
         if (!user) {
