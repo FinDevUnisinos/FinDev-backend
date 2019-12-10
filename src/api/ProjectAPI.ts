@@ -188,7 +188,7 @@ projectApp.post(route.getProjectInterestsRoute() + '/remove', authApp, async (re
             res.send("Interest successfully removed from Project")
 
         } else {
-            res.status(403).send("You cannot insert a interest on a project since you aren't an employee")
+            res.status(403).send("You cannot remove an interest on a project since you aren't an employee")
         }
     })
 });
