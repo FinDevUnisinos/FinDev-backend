@@ -71,6 +71,16 @@ export class ProjectController {
             .execute();
     }
 
+    removeInterestOnProject(projectId: number, userId: number): void {
+        getConnection()
+        .createQueryBuilder()
+        .update(UserInterestProject)
+        .set({hasFreelancerInterest: false})
+        .where("\"UserInterestProject\".\"projectId\" = :projectId", { projectId: projectId})
+        .andWhere("\"UserInterestProject\".\"userId\" = :userId", { userId: userId })
+        .execute();
+    }
+
     addInterestOnFrelancer(projectId: number, userId: number, hasCompanyInterest: boolean): void {
         getConnection()
         .createQueryBuilder()
