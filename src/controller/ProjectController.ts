@@ -167,7 +167,7 @@ export class ProjectController {
 
     getProjectsByUserInterest(user: User): Promise<UserInterestProject[]> {
         return getConnection()
-            .getRepository(	UserInterestProject)
+            .getRepository(UserInterestProject)
             .find({ user: user })
     }
 
