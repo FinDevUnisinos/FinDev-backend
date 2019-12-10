@@ -173,6 +173,26 @@ projectApp.post(route.getProjectInterestsRoute() + '/insert', authApp, async (re
     })
 });
 
+projectApp.post(route.getProjectInterestsRoute() + '/remove', authApp, async (req, res, next) => {
+
+    asyncConnection().then(async () => {
+
+        const user = await sessionController.getUserLoggedIn(req)
+
+        if (user.userType === UserTypes.EMPLOYEE) {
+
+            const projectId = Number.parseInt(req.body.projectId)
+            const userId = user.id
+
+            await projectController.removeInterestOnProject(projectId, userId)
+            res.send("Interest successfully removed from Project")
+
+        } else {
+            res.status(403).send("You cannot insert a interest on a project since you aren't an employee")
+        }
+    })
+});
+
 projectApp.post(route.getProjectInterestsRoute() + '/update', authApp, async (req, res, next) => {
 
     asyncConnection().then(async () => {
