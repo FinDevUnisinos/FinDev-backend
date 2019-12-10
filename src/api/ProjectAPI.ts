@@ -245,7 +245,7 @@ projectApp.post(route.getProjectRoute() + '/id', authApp, async (req, res, next)
             const projectId = Number.parseInt(req.body.projectId)
             res.send(await projectController.getProjectById(projectId))
         } else {
-            res.status(403).send("You cannot get ithis project since you aren't a company")
+            res.status(403).send("You cannot get this project since you aren't a company")
         }
     })
 });

@@ -95,14 +95,6 @@ export class ProjectController {
         return getConnection().manager.find(Project);
     }
 
-    getProjectsById(idExt: number): Promise<Project[]> {
-        return getConnection()
-            .getRepository(Project)
-            .createQueryBuilder("projects")
-            .where("projects.id = :id", { id: idExt })
-            .getMany();
-    }
-
     getProjectsWithSkillsCompany(user: User): Promise<Project[]> {
         return createQueryBuilder(Project)
             .leftJoinAndSelect("Project.skillsProject", "skillProject")
