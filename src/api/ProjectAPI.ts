@@ -235,6 +235,21 @@ projectApp.post(route.getProjectInterestsRoute() + '/all', authApp, async (req, 
     })
 });
 
+projectApp.post(route.getProjectRoute() + '/id', authApp, async (req, res, next) => {
+
+    asyncConnection().then(async () => {
+
+        const user = await sessionController.getUserLoggedIn(req)
+
+        if (user.userType === UserTypes.COMPANY) {
+            const projectId = Number.parseInt(req.body.projectId)
+            res.send(await projectController.getProjectById(projectId))
+        } else {
+            res.status(403).send("You cannot get ithis project since you aren't a company")
+        }
+    })
+});
+
 projectApp.post(route.getProjectSkillsRoute() + '/insert', authApp, async (req, res, next) => {
 
     asyncConnection().then(async () => {
