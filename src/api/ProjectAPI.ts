@@ -93,7 +93,7 @@ projectApp.post(route.getProjectRoute() + '/update', authApp, async (req, res, n
                 })
 
             } else {
-                res.status(403).send("This Project not yours!")
+                res.status(403).send("This Project is not yours!")
             }
 
         } else {
