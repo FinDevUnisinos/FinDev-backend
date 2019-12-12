@@ -87,6 +87,23 @@ projectApp.post(route.getProjectRoute() + '/update', authApp, async (req, res, n
                 project.closed = req.body.closed == undefined ? project.closed : req.body.closed
 
                 const result = await projectController.updateProject(project)
+
+                const listSkills = req.body.listSkills
+                if (listSkills != undefined) {
+                    try {
+                        const promises = listSkills.map(async (skill: any) => {
+                            let skillId = skill.skillId
+                            let level = skill.level
+    
+                            await projectController.addSkillOnProject(projectId, skillId, level)
+                        })
+    
+                        await Promise.all(promises);
+                    } catch (error) {
+    
+                    }
+                }
+
                 res.send({
                     status: "Project successfully created",
                     result: result
