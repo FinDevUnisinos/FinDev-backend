@@ -93,7 +93,7 @@ projectApp.post(route.getProjectRoute() + '/update', authApp, async (req, res, n
                 })
 
             } else {
-                res.status(403).send("This Project not yours!")
+                res.status(403).send("This Project is not yours!")
             }
 
         } else {
@@ -231,6 +231,21 @@ projectApp.post(route.getProjectInterestsRoute() + '/all', authApp, async (req, 
             res.send(await projectController.getInterestsOfAllProjects(user))
         } else {
             res.status(403).send("You cannot get interest on your projects since you aren't a company")
+        }
+    })
+});
+
+projectApp.post(route.getProjectRoute() + '/id', authApp, async (req, res, next) => {
+
+    asyncConnection().then(async () => {
+
+        const user = await sessionController.getUserLoggedIn(req)
+
+        if (user.userType === UserTypes.COMPANY) {
+            const projectId = Number.parseInt(req.body.projectId)
+            res.send(await projectController.getProjectById(projectId))
+        } else {
+            res.status(403).send("You cannot get this project since you aren't a company")
         }
     })
 });
