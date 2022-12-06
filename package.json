@@ -17,10 +17,10 @@
   },
   "dependencies": {
     "@types/node": "^12.7.5",
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.1",
     "cors": "^2.8.5",
     "dotenv": "^8.1.0",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "hash.js": "^1.1.7",
     "njwt": "^1.0.0",
     "pg": "^7.12.1",
